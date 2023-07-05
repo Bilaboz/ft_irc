@@ -15,12 +15,21 @@ CXXFLAGS = -Wall -Werror -Wextra --std=c++98 $(DEFINES)
 INCLUDE = -I$(INC_DIR)
 DEBUGFLAGS = -g
 
+define generate_compile_commands
+	make --always-make --dry-run \
+		| grep -wE 'gcc|cc|clang|g\+\+|c\+\+' \
+		| grep -w '\-c' \
+		| jq -nR "[inputs|{directory:\""$(PWD)"\", command:., file: match(\"[^ ]*\\\.(cpp|c)\").string[0:]}]" \
+		> $(OBJ_DIR)/compile_commands.json
+endef
+
 all: $(NAME)
 
 debug: CXXFLAGS += $(DEBUGFLAGS)
 debug: $(NAME)
 
 $(NAME): $(OBJ_DIR) $(OBJS)
+	@$(call generate_compile_commands)
 	@printf "\n$(BLUE)Linking...   $(RESET)"
 	@$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME) $(LFLAGS)
 	@printf "$(BLUE)Done\n$(RESET)"
@@ -47,7 +56,11 @@ re: fclean print_newline all
 print_newline:
 	@echo
 
-.PHONY: all clean fclean re print_newline
+compile_commands: $(OBJ_DIR)
+	@$(call generate_compile_commands)
+	@echo 'Done'
+
+.PHONY: all clean fclean re print_newline compile_commands
 
 # colors
 
