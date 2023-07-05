@@ -1,0 +1,20 @@
+BasedOnStyle: LLVM
+Language: Cpp
+UseTab: Always
+IndentWidth: 4
+TabWidth: 4
+ColumnLimit: 80
+BreakBeforeBraces: Allman
+SeparateDefinitionBlocks: Always
+AlignAfterOpenBracket: BlockIndent
+IncludeBlocks: Regroup
+IncludeCategories:
+  # External headers in <> with extension or /
+  - Regex: '<[\w\/-_]+[\.\/][\w\/-_]+>'
+    Priority: 2
+  # Standard headers in <>
+  - Regex: '<[\w\/-_]+>'
+    Priority: 3
+  # Local headers in ""
+  - Regex: '"[\w\/-_]*"'
+    Priority: 4
