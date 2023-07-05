@@ -1,0 +1,5 @@
+Checks: '-*,clang-diagnostic-*,clang-analyzer-*,bugprone-*,performance-*,readability-*,portability-*,clang-analyzer-*,cppcoreguidelines-*,-cppcoreguidelines-pro*,misc-*,-readability-braces-around-statements,-readability-implicit-bool-conversion'
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
+AnalyzeTemporaryDtors: false
+FormatStyle: 'file'
