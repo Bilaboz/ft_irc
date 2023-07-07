@@ -6,14 +6,14 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:47:44 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/05 19:04:27 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/07 19:25:46 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "Log.hpp"
+
 #include <fstream>
 #include <iostream>
-
-#include "Log.hpp"
 
 std::ofstream Log::m_null;
 int Log::m_level = Log::DEBUG;
@@ -23,34 +23,38 @@ void Log::setLevel(int level)
 	m_level = level;
 }
 
-std::ostream& Log::Debug()
+std::ostream& Log::debug()
 {
-	if (m_level <= DEBUG)
-		return std::cout;
+	if (m_level > DEBUG)
+		return m_null;
 
-	return m_null;
+	std::cout << DEBUG_HEADER;
+	return std::cout;
 }
 
-std::ostream& Log::Info()
+std::ostream& Log::info()
 {
-	if (m_level <= INFO)
-		return std::cout;
+	if (m_level > INFO)
+		return m_null;
 
-	return m_null;
+	std::cout << INFO_HEADER;
+	return std::cout;
 }
 
-std::ostream& Log::Warning()
+std::ostream& Log::warning()
 {
-	if (m_level <= WARNING)
-		return std::cout;
+	if (m_level > WARNING)
+		return m_null;
 
-	return m_null;
+	std::cout << WARNING_HEADER;
+	return std::cout;
 }
 
-std::ostream& Log::Error()
+std::ostream& Log::error()
 {
-	if (m_level <= ERROR)
-		return std::cerr;
+	if (m_level > ERROR)
+		return m_null;
 
-	return m_null;
+	std::cerr << ERROR_HEADER;
+	return std::cerr;
 }
