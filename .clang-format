@@ -7,6 +7,7 @@ ColumnLimit: 80
 BreakBeforeBraces: Allman
 SeparateDefinitionBlocks: Always
 AlignAfterOpenBracket: BlockIndent
+AllowShortFunctionsOnASingleLine: Inline
 IncludeBlocks: Regroup
 IncludeCategories:
   # External headers in <> with extension or /

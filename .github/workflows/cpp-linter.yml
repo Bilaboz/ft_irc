@@ -19,6 +19,7 @@ jobs:
         with:
           style: file
           database: bin/
+          version: '16'
           tidy-checks: '' # rely on .clang-tidy file
 
       - name: Fail fast?!
