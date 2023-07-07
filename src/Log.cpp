@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:47:44 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/07 19:19:41 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/07 19:25:46 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void Log::setLevel(int level)
 	m_level = level;
 }
 
-std::ostream &Log::debug()
+std::ostream& Log::debug()
 {
 	if (m_level > DEBUG)
 		return m_null;
@@ -32,7 +32,7 @@ std::ostream &Log::debug()
 	return std::cout;
 }
 
-std::ostream &Log::info()
+std::ostream& Log::info()
 {
 	if (m_level > INFO)
 		return m_null;
@@ -41,7 +41,7 @@ std::ostream &Log::info()
 	return std::cout;
 }
 
-std::ostream &Log::warning()
+std::ostream& Log::warning()
 {
 	if (m_level > WARNING)
 		return m_null;
@@ -50,7 +50,7 @@ std::ostream &Log::warning()
 	return std::cout;
 }
 
-std::ostream &Log::error()
+std::ostream& Log::error()
 {
 	if (m_level > ERROR)
 		return m_null;

@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:39:26 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/07 19:20:08 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/07 19:26:05 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,10 @@ class Log
 	};
 
 	static void setLevel(int level);
-	static std::ostream &debug();
-	static std::ostream &info();
-	static std::ostream &warning();
-	static std::ostream &error();
+	static std::ostream& debug();
+	static std::ostream& info();
+	static std::ostream& warning();
+	static std::ostream& error();
 
   private:
 	static int m_level;

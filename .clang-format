@@ -7,6 +7,8 @@ ColumnLimit: 80
 BreakBeforeBraces: Allman
 SeparateDefinitionBlocks: Always
 AlignAfterOpenBracket: BlockIndent
+DerivePointerAlignment: true
+PointerAlignment: Left
 AllowShortFunctionsOnASingleLine: Inline
 IncludeBlocks: Regroup
 IncludeCategories:
