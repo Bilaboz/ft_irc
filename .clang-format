@@ -9,6 +9,7 @@ SeparateDefinitionBlocks: Always
 AlignAfterOpenBracket: BlockIndent
 DerivePointerAlignment: true
 PointerAlignment: Left
+EmptyLineBeforeAccessModifier: LogicalBlock
 AllowShortFunctionsOnASingleLine: Inline
 IncludeBlocks: Regroup
 IncludeCategories:
