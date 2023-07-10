@@ -6,7 +6,7 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 18:46:33 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/10 22:50:53 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/10 22:55:09 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ bool PacketBuffer::getPacket(std::string& str)
 
 	char* end = m_buffer + PACKET_BUFFER_SIZE;
 	const char* found = std::find(m_buffer, end, '\r');
-	size_t packetSize = found - m_buffer;
+	const size_t packetSize = found - m_buffer;
 
 	str.append(m_buffer, packetSize);
 
