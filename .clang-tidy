@@ -3,3 +3,6 @@ WarningsAsErrors: ''
 HeaderFilterRegex: ''
 AnalyzeTemporaryDtors: false
 FormatStyle: 'file'
+CheckOptions:
+  - key: readability-identifier-length.MinimumVariableNameLength
+    value: 2
