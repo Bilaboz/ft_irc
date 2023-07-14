@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:51:44 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/12 17:40:33 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/13 16:17:03 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,10 @@ class ClientsManager
 	void add(int fd);
 	void remove(int fd);
 	void remove(const char* nickname);
-	std::pair<const int, Client>& get(int fd);
-	const std::pair<const int, Client>& get(int fd) const;
-	std::pair<const int, Client>& get(const char* nickname);
-	const std::pair<const int, Client>& get(const char* nickname) const;
+	FdClient& get(int fd);
+	const FdClient& get(int fd) const;
+	FdClient& get(const char* nickname);
+	const FdClient& get(const char* nickname) const;
 	pollfd* getRawFds();
 	const pollfd* getRawFds() const;
 

@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/12 17:40:02 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/13 16:18:51 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 
 #include <stdexcept>
 #include <utility>
+#include "Client.hpp"
 
 ClientsManager::ClientsManager() {}
 
@@ -87,7 +88,7 @@ void ClientsManager::remove(const char* nickname)
 	throw std::invalid_argument(exception);
 }
 
-std::pair<const int, Client>& ClientsManager::get(int fd)
+FdClient& ClientsManager::get(int fd)
 {
 	std::map<int, Client>::iterator ret = m_clients.find(fd);
 
@@ -99,7 +100,7 @@ std::pair<const int, Client>& ClientsManager::get(int fd)
 	return *ret;
 }
 
-const std::pair<const int, Client>& ClientsManager::get(int fd) const
+const FdClient& ClientsManager::get(int fd) const
 {
 	std::map<int, Client>::const_iterator ret = m_clients.find(fd);
 
@@ -111,7 +112,7 @@ const std::pair<const int, Client>& ClientsManager::get(int fd) const
 	return *ret;
 }
 
-std::pair<const int, Client>& ClientsManager::get(const char* nickname)
+FdClient& ClientsManager::get(const char* nickname)
 {
 	for (std::map<int, Client>::iterator it = m_clients.begin();
 		 it != m_clients.end(); ++it)
@@ -128,7 +129,7 @@ std::pair<const int, Client>& ClientsManager::get(const char* nickname)
 	throw std::invalid_argument(exception);
 }
 
-const std::pair<const int, Client>& ClientsManager::get(const char* nickname
+const FdClient& ClientsManager::get(const char* nickname
 ) const
 {
 	for (std::map<int, Client>::const_iterator it = m_clients.begin();
