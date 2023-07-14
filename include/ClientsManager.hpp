@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:51:44 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/13 16:17:03 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/14 14:30:15 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,7 @@ class ClientsManager
 	const FdClient& get(int fd) const;
 	FdClient& get(const char* nickname);
 	const FdClient& get(const char* nickname) const;
-	pollfd* getRawFds();
-	const pollfd* getRawFds() const;
+	const std::vector<pollfd>& getPollfds() const;
 
   private:
 	std::vector<pollfd> m_fds;
