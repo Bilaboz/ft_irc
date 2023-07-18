@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/14 14:30:18 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/18 14:31:52 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <stdexcept>
 #include <utility>
 #include <vector>
+
 #include "Client.hpp"
 
 ClientsManager::ClientsManager() {}
@@ -130,8 +131,7 @@ FdClient& ClientsManager::get(const char* nickname)
 	throw std::invalid_argument(exception);
 }
 
-const FdClient& ClientsManager::get(const char* nickname
-) const
+const FdClient& ClientsManager::get(const char* nickname) const
 {
 	for (std::map<int, Client>::const_iterator it = m_clients.begin();
 		 it != m_clients.end(); ++it)

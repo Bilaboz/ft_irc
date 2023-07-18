@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 18:15:47 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/12 15:27:12 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/18 14:31:45 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 Client::Client() {}
 
 Client::Client(const Client& other)
-	: m_nickname(other.m_nickname), m_username(other.m_username), buf(other.buf), channels(other.channels)
+	: m_nickname(other.m_nickname), m_username(other.m_username), buf(other.buf)
 {
 }
 
@@ -26,7 +26,6 @@ Client& Client::operator=(const Client& rhs)
 		m_nickname = rhs.m_nickname;
 		m_username = rhs.m_username;
 		buf = rhs.buf;
-		channels = rhs.channels;
 	}
 
 	return *this;
@@ -46,10 +45,12 @@ const std::string& Client::getNickname() const
 
 void Client::setUsername(const char* username)
 {
+	// TODO Rules for username
 	m_username = username;
 }
 
 void Client::setNickanme(const char* nickname)
 {
+	// TODO Rules for nickname
 	m_nickname = nickname;
 }

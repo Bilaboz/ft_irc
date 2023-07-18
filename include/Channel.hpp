@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:07 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/13 16:48:04 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/18 14:32:43 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define CHANNEL_HPP
 
 #include <vector>
+
 #include "Client.hpp"
 
 class Channel
@@ -35,11 +36,19 @@ class Channel
 	bool isOperator(const FdClient& user);
 	bool isUser(const FdClient& user);
 	bool isInvited(const FdClient& user);
-	bool setPassword(const char *password);
+	bool setPassword(const char* password);
 	void setUserLimit(int limit);
 
 	bool inviteOnly;
 	bool topicOperator;
+
+	enum
+	{
+		SUCCESS = 0,
+		USER_NOEXIST,
+		USER_ALREADY,
+		WRONG_PASSWORD
+	};
 
   private:
 	std::string m_name;
