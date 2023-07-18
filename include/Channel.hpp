@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:07 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/18 14:32:43 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/18 17:47:31 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ class Channel
 	int promote(FdClient& user);
 	int retrograde(FdClient& user);
 	void msg(char* msg, const FdClient& sender);
-	bool isOperator(const FdClient& user);
-	bool isUser(const FdClient& user);
-	bool isInvited(const FdClient& user);
+	bool isOperator(const FdClient& user) const;
+	bool isUser(const FdClient& user) const;
+	bool isInvited(const FdClient& user) const;
 	bool setPassword(const char* password);
 	void setUserLimit(int limit);
 
