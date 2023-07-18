@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/18 14:31:52 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/18 15:02:07 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,6 +151,15 @@ const FdClient& ClientsManager::get(const char* nickname) const
 const std::vector<pollfd>& ClientsManager::getPollfds() const
 {
 	return m_fds;
+}
+
+bool ClientsManager::isNicknameUsed(const char* nick) const
+{
+	for (std::map<int, Client>::const_iterator it = m_clients.begin();
+		 it != m_clients.end(); it++)
+		if (it->second.getNickname() == nick)
+			return true;
+	return false;
 }
 
 void ClientsManager::addPollFd(int fd)
