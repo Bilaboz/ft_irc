@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:18 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/18 14:31:36 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/18 17:43:57 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ int Channel::kick(FdClient& user)
 	bool erased = false;
 	std::vector<FdClient*>::iterator it =
 		std::find(m_users.begin(), m_users.end(), &user);
+
 	if (it != m_users.end())
 	{
 		m_users.erase(it);
@@ -69,6 +70,7 @@ int Channel::kick(FdClient& user)
 		m_invited.erase(it);
 		erased = true;
 	}
+
 	return erased ? SUCCESS : USER_NOEXIST;
 }
 
@@ -76,6 +78,7 @@ int Channel::add(FdClient& user, const char* password)
 {
 	std::vector<FdClient*>::iterator it =
 		std::find(m_users.begin(), m_users.end(), &user);
+
 	if (it == m_users.end())
 	{
 		if (m_password != password)
@@ -83,49 +86,58 @@ int Channel::add(FdClient& user, const char* password)
 		m_users.push_back(&user);
 		return SUCCESS;
 	}
+
 	return USER_ALREADY;
 }
 
 int Channel::promote(FdClient& user)
 {
-	if (this->isUser(user))
+	if (!this->isUser(user))
 		return USER_NOEXIST;
-	std::vector<FdClient*>::iterator it =
+
+	const std::vector<FdClient*>::iterator it =
 		std::find(m_operators.begin(), m_operators.end(), &user);
+
 	if (it == m_operators.end())
 	{
 		m_users.push_back(&user);
 		return SUCCESS;
 	}
+
 	return USER_ALREADY;
 }
 
 int Channel::retrograde(FdClient& user)
 {
-	if (this->isUser(user))
+	if (!this->isUser(user))
 		return USER_NOEXIST;
-	std::vector<FdClient*>::iterator it =
+
+	const std::vector<FdClient*>::iterator it =
 		std::find(m_operators.begin(), m_operators.end(), &user);
+
 	if (it != m_operators.end())
 	{
 		m_users.erase(it);
 		return SUCCESS;
 	}
+
 	return USER_ALREADY;
 }
 
 // void Channel::msg(char* msg, const FdClient& sender) {}
 
-bool Channel::isOperator(const FdClient& user)
+bool Channel::isOperator(const FdClient& user) const
 {
-	std::vector<FdClient*>::iterator it =
+	const std::vector<FdClient*>::const_iterator it =
 		std::find(m_operators.begin(), m_operators.end(), &user);
+
 	return it != m_operators.end();
 }
 
-bool Channel::isUser(const FdClient& user)
+bool Channel::isUser(const FdClient& user) const
 {
-	std::vector<FdClient*>::iterator it =
+	const std::vector<FdClient*>::const_iterator it =
 		std::find(m_users.begin(), m_users.end(), &user);
+
 	return it != m_users.end();
 }
