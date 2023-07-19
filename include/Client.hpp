@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 15:22:15 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 16:34:09 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/19 17:31:43 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class Client
   private:
 	std::string m_nickname;
 	std::string m_username;
+	std::string m_realname;
 	PacketBuffer buf;
 };
 

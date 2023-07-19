@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 17:44:44 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/19 18:25:16 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,11 @@ int Exec::topic(
 	channelIt->setTopic(message.parameters()[1]);
 	// broadcast RPL_TOPIC (332) or RPL_NOTOPIC (331)
 	// then RPL_TOPICWHOTIME (333)
+	return 0;
+}
 	
+int Exec::user(const Message& Message, ClientsManager& clients, int fd, std::vector<Channel>& channels)
+{
+
 	return 0;
 }
