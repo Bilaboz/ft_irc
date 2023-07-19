@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:18 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 16:12:48 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/19 17:10:14 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ Channel::Channel() {}
 Channel::Channel(const char* name) : m_name(name) {}
 
 Channel::Channel(const Channel& other)
-	: inviteOnly(other.inviteOnly), topicOperator(other.topicOperator),
+	: inviteOnly(other.inviteOnly), isTopicProtected(other.isTopicProtected),
 	  m_name(other.m_name), m_users(other.m_users),
 	  m_operators(other.m_operators), m_invited(other.m_invited),
 	  m_password(other.m_password), m_userLimit(other.m_userLimit)
@@ -32,7 +32,7 @@ Channel::Channel(const Channel& other)
 Channel& Channel::operator=(const Channel& rhs)
 {
 	inviteOnly = rhs.inviteOnly;
-	topicOperator = rhs.topicOperator;
+	isTopicProtected = rhs.isTopicProtected;
 	m_name = rhs.m_name;
 	m_users = rhs.m_users;
 	m_operators = rhs.m_operators;
@@ -154,3 +154,14 @@ std::string Channel::getName() const
 {
 	return m_name;
 }
+
+std::string Channel::getTopic() const
+{
+	return m_topic;
+}
+
+void Channel::setTopic(const std::string& topic)
+{
+	m_topic = topic;
+}
+

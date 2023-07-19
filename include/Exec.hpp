@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 14:30:38 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 16:31:51 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/19 16:39:05 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,8 @@ class Exec
 	nick(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
 	static int
 	kick(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
-	// static int
-	// topic(const Message& message, ClientsManager& clients, int fd,
-	// std::vector<Channel>&);
+	static int
+	topic(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
 };
 
 #endif

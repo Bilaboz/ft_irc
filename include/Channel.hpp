@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:07 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 16:12:28 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/19 17:04:10 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,11 @@ class Channel
 	bool setPassword(const char* password);
 	void setUserLimit(int limit);
 	std::string getName() const;
+	std::string getTopic() const;
+	void setTopic(const std::string& topic);
 
 	bool inviteOnly;
-	bool topicOperator;
+	bool isTopicProtected;
 
 	enum
 	{
@@ -52,6 +54,7 @@ class Channel
 
   private:
 	std::string m_name;
+	std::string m_topic;
 	std::vector<FdClient*> m_users;
 	std::vector<FdClient*> m_operators;
 	std::vector<FdClient*> m_invited;
