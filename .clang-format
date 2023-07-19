@@ -11,6 +11,7 @@ DerivePointerAlignment: true
 PointerAlignment: Left
 EmptyLineBeforeAccessModifier: LogicalBlock
 AllowShortFunctionsOnASingleLine: Inline
+PenaltyReturnTypeOnItsOwnLine: 200
 IncludeBlocks: Regroup
 IncludeCategories:
   # External headers in <> with extension or /

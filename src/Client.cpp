@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 18:15:47 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/18 14:31:45 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/19 16:34:24 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void Client::setUsername(const char* username)
 	m_username = username;
 }
 
-void Client::setNickanme(const char* nickname)
+void Client::setNickname(const char* nickname)
 {
 	// TODO Rules for nickname
 	m_nickname = nickname;

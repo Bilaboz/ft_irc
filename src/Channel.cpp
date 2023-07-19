@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:18 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/18 17:48:36 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/19 16:12:48 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,4 +148,9 @@ bool Channel::isInvited(const FdClient& user) const
 		std::find(m_invited.begin(), m_invited.end(), &user);
 
 	return it != m_invited.end();
+}
+
+std::string Channel::getName() const
+{
+	return m_name;
 }
