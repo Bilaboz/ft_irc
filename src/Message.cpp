@@ -6,7 +6,7 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 15:10:48 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/13 16:58:56 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/19 17:38:54 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,12 @@ void Message::parse(const std::string& str)
 	}
 }
 
-std::string Message::verb() const
+const std::string& Message::verb() const
 {
 	return m_verb;
 }
 
-std::vector<std::string> Message::parameters() const
+const std::vector<std::string>& Message::parameters() const
 {
 	return m_parameters;
 }

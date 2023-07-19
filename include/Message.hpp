@@ -6,7 +6,7 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 15:02:26 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/13 16:57:45 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/19 17:38:45 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ class Message
 
 	void parse(const std::string& str);
 
-	std::string verb() const;
-	std::vector<std::string> parameters() const;
+	const std::string& verb() const;
+	const std::vector<std::string>& parameters() const;
 
   private:
 	std::string m_verb;

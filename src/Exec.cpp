@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 17:44:44 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/19 21:01:20 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,17 @@
 #include <map>
 #include <utility>
 
+#include "Client.hpp"
+
 const std::map<std::string, Exec::func> Exec::m_functions = Exec::initTable();
 
 int Exec::exec(
-	const Message& Message, ClientsManager& clients, int fd,
+	const Message& message, ClientsManager& clients, int fd,
 	std::vector<Channel>& channels
 )
 {
-	const func function = m_functions.at(Message.verb());
-	return function(Message, clients, fd, channels);
+	const func function = m_functions.at(message.verb());
+	return function(message, clients, fd, channels);
 }
 
 std::map<std::string, Exec::func> Exec::initTable()
@@ -84,6 +86,30 @@ int Exec::topic(
 	channelIt->setTopic(message.parameters()[1]);
 	// broadcast RPL_TOPIC (332) or RPL_NOTOPIC (331)
 	// then RPL_TOPICWHOTIME (333)
-	
+	return 0;
+}
+
+int Exec::user(
+	const Message& message, ClientsManager& clients, int fd,
+	std::vector<Channel>& channels
+)
+{
+	(void)channels;
+	const std::vector<std::string>& parameters = message.parameters();
+	if (parameters.size() != 4 || parameters[3].empty())
+	{
+		// TODO: ERR_NEEDMOREPARAMS (461) --> fd
+		return 0;
+	}
+
+	FdClient& client = clients.get(fd);
+	if (!client.second.getUsername().empty())
+	{
+		// TODO: ERR_ALREADYREGISTERED (462) --> fd
+		return 0;
+	}
+	client.second.setUsername(parameters[0].c_str());
+	client.second.setRealname(parameters[3].c_str());
+
 	return 0;
 }
