@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 18:25:16 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/19 18:46:09 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <map>
 #include <utility>
+#include "Client.hpp"
 
 const std::map<std::string, Exec::func> Exec::m_functions = Exec::initTable();
 
@@ -87,8 +88,22 @@ int Exec::topic(
 	return 0;
 }
 	
-int Exec::user(const Message& Message, ClientsManager& clients, int fd, std::vector<Channel>& channels)
+int Exec::user(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>& channels)
 {
+	(void)channels;
+	const std::vector<std::string>& parameters = message.parameters();
+	if (parameters.size() != 4 || parameters[3].empty())
+	{
+		//TODO: ERR_NEEDMOREPARAMS (461) --> fd
+		//TODO: return
+	}
+
+	FdClient& client = clients.get(fd);
+	if (client.second.getUsername().empty())
+	{
+		//TODO: ERR_ALREADYREGISTERED (462) --> fd
+		//TODO: return
+	}
 
 	return 0;
 }
