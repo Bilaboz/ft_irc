@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 16:31:46 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/19 17:44:44 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,40 @@ Exec::ChannelsIt Exec::findChannel(
 	return channels.end();
 }
 
-// int Exec::topic(
-//	const Message& message, ClientsManager& clients, int fd,
-//	std::vector<Channel>& channels
-//)
-//{
-//	ChannelsIt channel = findChannel(channels, message.parameters().front());
-// }
+int Exec::topic(
+	const Message& message, ClientsManager& clients, int fd,
+	std::vector<Channel>& channels
+)
+{
+	if (message.parameters().empty())
+	{
+		// ERR_NEEDMOREPARAMS (461)
+		return 0;
+	}
+
+	ChannelsIt channelIt = findChannel(channels, message.parameters().front());
+	if (channelIt == channels.end())
+	{
+		// ERR_NOSUCHCHANNEL (403)
+		return 0;
+	}
+
+	if (message.parameters().size() == 1)
+	{
+		// RPL_TOPIC (332) or RPL_NOTOPIC (331)
+		// maybe then RPL_TOPICWHOTIME (333)
+		return 0;
+	}
+
+	if (channelIt->isTopicProtected && !channelIt->isOperator(clients.get(fd)))
+	{
+		// ERR_CHANOPRIVSNEEDED (482)
+		return 0;
+	}
+
+	channelIt->setTopic(message.parameters()[1]);
+	// broadcast RPL_TOPIC (332) or RPL_NOTOPIC (331)
+	// then RPL_TOPICWHOTIME (333)
+	
+	return 0;
+}

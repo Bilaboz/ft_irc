@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 14:30:38 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 16:31:51 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/19 17:45:10 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,13 @@
 class Exec
 {
   public:
+	typedef int (*func)(const Message&, ClientsManager&, int, std::vector<Channel>&);
+	typedef std::vector<Channel>::iterator ChannelsIt;
+
 	static int exec(
 		const Message& message, ClientsManager& clients, int fd,
 		std::vector<Channel>& channels
 	);
-
-	typedef int (*func)(const Message&, ClientsManager&, int, std::vector<Channel>&);
-	typedef std::vector<Channel>::iterator ChannelsIt;
 
   private:
 	static const std::map<std::string, func> m_functions;
@@ -46,9 +46,8 @@ class Exec
 	nick(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
 	static int
 	kick(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
-	// static int
-	// topic(const Message& message, ClientsManager& clients, int fd,
-	// std::vector<Channel>&);
+	static int
+	topic(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
 };
 
 #endif
