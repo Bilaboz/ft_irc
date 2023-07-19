@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 18:46:09 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/19 20:58:58 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,12 @@
 const std::map<std::string, Exec::func> Exec::m_functions = Exec::initTable();
 
 int Exec::exec(
-	const Message& Message, ClientsManager& clients, int fd,
+	const Message& message, ClientsManager& clients, int fd,
 	std::vector<Channel>& channels
 )
 {
-	const func function = m_functions.at(Message.verb());
-	return function(Message, clients, fd, channels);
+	const func function = m_functions.at(message.verb());
+	return function(message, clients, fd, channels);
 }
 
 std::map<std::string, Exec::func> Exec::initTable()
@@ -95,15 +95,17 @@ int Exec::user(const Message& message, ClientsManager& clients, int fd, std::vec
 	if (parameters.size() != 4 || parameters[3].empty())
 	{
 		//TODO: ERR_NEEDMOREPARAMS (461) --> fd
-		//TODO: return
+		return 0;
 	}
 
 	FdClient& client = clients.get(fd);
-	if (client.second.getUsername().empty())
+	if (!client.second.getUsername().empty())
 	{
 		//TODO: ERR_ALREADYREGISTERED (462) --> fd
-		//TODO: return
+		return 0;
 	}
+	client.second.setUsername(parameters[0].c_str());
+	client.second.setRealname(parameters[3].c_str());
 
 	return 0;
 }

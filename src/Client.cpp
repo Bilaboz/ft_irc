@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 18:15:47 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 16:34:24 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/19 20:56:01 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,22 @@ const std::string& Client::getNickname() const
 	return m_nickname;
 }
 
+const std::string& Client::getRealname() const
+{
+	return m_realname;
+}
+
 void Client::setUsername(const char* username)
 {
-	// TODO Rules for username
 	m_username = username;
 }
 
 void Client::setNickname(const char* nickname)
 {
-	// TODO Rules for nickname
 	m_nickname = nickname;
+}
+
+void Client::setRealname(const char* realname)
+{
+	m_realname = realname;
 }
