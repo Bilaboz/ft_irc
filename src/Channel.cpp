@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:18 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 17:10:14 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/20 22:57:20 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,13 +76,17 @@ int Channel::kick(FdClient& user)
 
 int Channel::add(FdClient& user, const char* password)
 {
-	std::vector<FdClient*>::iterator it =
+	const std::vector<FdClient*>::iterator it =
 		std::find(m_users.begin(), m_users.end(), &user);
 
 	if (it == m_users.end())
 	{
 		if (m_password != password)
 			return WRONG_PASSWORD;
+		if (m_users.size() == (size_t)m_userLimit)
+			return CHANNELISFULL;
+		if (inviteOnly && !isInvited(user))
+			return INVITEONLYCHAN;
 		m_users.push_back(&user);
 		return SUCCESS;
 	}
@@ -164,4 +168,3 @@ void Channel::setTopic(const std::string& topic)
 {
 	m_topic = topic;
 }
-
