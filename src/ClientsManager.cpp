@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 16:33:35 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/20 18:17:55 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void ClientsManager::add(int fd)
 
 void ClientsManager::remove(int fd)
 {
-	std::map<int, Client>::iterator clientIt = m_clients.find(fd);
+	const std::map<int, Client>::iterator clientIt = m_clients.find(fd);
 
 	if (clientIt == m_clients.end())
 	{
@@ -69,11 +69,11 @@ void ClientsManager::remove(int fd)
 		);
 	}
 
-	close(clientIt->first);
-	m_clients.erase(clientIt);
-
 	Log::info() << "Client on fd " << fd << " ("
 				<< clientIt->second.getNickname() << ") disconnected\n";
+
+	close(clientIt->first);
+	m_clients.erase(clientIt);
 }
 
 void ClientsManager::remove(const char* nickname)
@@ -177,5 +177,6 @@ void ClientsManager::addPollFd(int fd)
 	pollfd newElem;
 	newElem.fd = fd;
 	newElem.events = POLLIN;
+	newElem.revents = 0;
 	m_fds.push_back(newElem);
 }

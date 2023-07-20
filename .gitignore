@@ -1,6 +1,7 @@
 bin/
 *.swp
 ft_irc
+ircserv
 
 # Prerequisites
 *.d

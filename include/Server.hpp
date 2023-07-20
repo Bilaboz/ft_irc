@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 17:38:44 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 16:34:49 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/20 17:20:05 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 class Server // NOLINT
 {
   public:
-	Server(int port);
+	Server(const char* port);
 	~Server();
 
 	int poll();

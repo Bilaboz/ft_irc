@@ -2,7 +2,7 @@ SRC_DIR = src/
 OBJ_DIR = bin/
 INC_DIR = include/
 
-NAME = ft_irc
+NAME = ircserv
 
 SRCS = $(wildcard $(SRC_DIR)*.cpp)
 SRCS := $(SRCS:$(SRC_DIR)%=%)
