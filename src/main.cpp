@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/20 17:15:36 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 17:26:41 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/20 18:09:55 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int main(int argc, char** argv)
 {
 	if (argc < 2 || argc > 3)
 	{
-		std::cout << "Usage : ircserv PORT [PASSWORD]\n";
+		std::cout << "Usage: ./ircserv PORT [PASSWORD]\n";
 		return 1;
 	}
 
@@ -34,6 +34,10 @@ int main(int argc, char** argv)
 		}
 	}
 	catch (std::runtime_error& e)
+	{
+		Log::error() << e.what() << '\n';
+	}
+	catch(std::invalid_argument& e)
 	{
 		Log::error() << e.what() << '\n';
 	}

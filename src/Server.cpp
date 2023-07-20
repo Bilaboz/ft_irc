@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:21:58 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 17:36:41 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/20 18:02:18 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ Server::Server(const char* port)
 			continue;
 		}
 
-		break ;
+		break;
 	}
 
 	freeaddrinfo(result);
@@ -85,17 +85,16 @@ int Server::poll()
 		return 1;
 	}
 
-	for (std::vector<pollfd>::iterator it = pfds.begin(); it != pfds.end();
-		 it++)
+	for (size_t i = 0; i < pfds.size(); ++i)
 	{
-		if (it->revents & POLLIN)
+		if (pfds[i].revents & POLLIN)
 		{
-			if (it->fd == pfds[0].fd)
+			if (pfds[i].fd == pfds[0].fd)
 			{
 				socklen_t addrlen = 0;
 				sockaddr addr;
 
-				const int newFd = accept(it->fd, &addr, &addrlen);
+				const int newFd = accept(pfds[i].fd, &addr, &addrlen);
 				if (newFd == -1)
 				{
 					Log::error()
@@ -103,29 +102,19 @@ int Server::poll()
 					return 2;
 				}
 
-				char ipStr[INET_ADDRSTRLEN];
-				struct sockaddr_in* clientIP =
-					reinterpret_cast<struct sockaddr_in*>(&addr);
-
-				inet_ntop(
-					clientIP->sin_family, &clientIP->sin_addr, ipStr,
-					sizeof(ipStr)
-				);
-
-				Log::info() << "New connection from " << ipStr << " on fd "
-							<< it->fd << "\n";
+				Log::info() << "New connection on fd " << newFd << "\n";
 
 				m_clients.add(newFd);
 			}
 			else
 			{
-				Client& client = m_clients.get(it->fd).second;
-				std::string packet = client.receive(it->fd, m_clients);
+				Client& client = m_clients.get(pfds[i].fd).second;
+				std::string packet = client.receive(pfds[i].fd, m_clients);
 				if (!packet.empty())
 				{
 					Message message(packet);
-					logReceivedMessage(message, it->fd);
-					Exec::exec(message, m_clients, it->fd, m_channels);
+					logReceivedMessage(message, pfds[i].fd);
+					Exec::exec(message, m_clients, pfds[i].fd, m_channels);
 				}
 			}
 		}
@@ -135,12 +124,14 @@ int Server::poll()
 
 void Server::logReceivedMessage(const Message& message, const int fd)
 {
-	Log::debug() << "Received (fd=" << fd << "): " << message.verb();
+	std::stringstream stream;
+	stream << "Received (fd=" << fd << "): " << message.verb();
 
 	for (size_t i = 0; i < message.parameters().size(); ++i)
-		Log::debug() << " [" << message.parameters()[i] << "]";
+		stream << " [" << message.parameters()[i] << "]";
 
-	Log::debug() << '\n';
+	stream << std::endl; // NOLINT
+	Log::debug() << stream.str();
 }
 
 void Server::stop() {}

@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 18:15:47 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 16:03:59 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/20 18:06:13 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,10 @@ std::string Client::receive(int fd, ClientsManager& clients)
 {
 	if (m_buffer.receive(fd) == PacketBuffer::CLIENT_DISCONNECTED ||
 		errno == ECONNRESET)
+	{
 		clients.remove(fd);
+		return "";
+	}
 
 	return m_buffer.getPacket();
 }
