@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 17:38:44 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 18:39:24 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/20 16:25:59 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 #include <vector>
 
 #include "ClientsManager.hpp"
-#include "Log.hpp"
+#include "Message.hpp"
 
 #define POLL_TIMEOUT 1000
 #define BACKLOG 10
@@ -33,18 +33,16 @@ class Server
 {
   public:
 	Server(int port);
-	int poll();
-	void stop();
 	~Server();
 
-  private:
-	const int m_port;
-	ClientsManager m_clients;
-	//	std::vector<Channel> m_channels;
+	int poll();
+	void stop();
 
-	Server();
-	Server(const Server& other);
-	Server& operator=(const Server& rhs);
+  private:
+	ClientsManager m_clients;
+	std::vector<Channel> m_channels;
+
+	static void logReceivedMessage(const Message& message, int fd);
 };
 
 #endif

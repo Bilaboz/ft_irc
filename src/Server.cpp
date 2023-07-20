@@ -6,15 +6,22 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:21:58 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 14:52:02 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/20 16:24:58 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
+#include <arpa/inet.h>
+
+#include <sstream>
 #include <stdexcept>
 
-Server::Server(int port) : m_port(port)
+#include "Exec.hpp"
+#include "Log.hpp"
+#include "Message.hpp"
+
+Server::Server(int port)
 {
 	int sock_fd = 0;
 	int yes = 1;
@@ -26,7 +33,9 @@ Server::Server(int port) : m_port(port)
 	hints.ai_flags = AI_PASSIVE;
 
 	addrinfo* result = NULL;
-	if (getaddrinfo(NULL, "1111", &hints, &result) != 0)
+	std::stringstream ss;
+	ss << port;
+	if (getaddrinfo(NULL, ss.str().c_str(), &hints, &result) != 0)
 		throw std::runtime_error(std::strerror(errno));
 
 	addrinfo* tmp = NULL;
@@ -56,6 +65,8 @@ Server::Server(int port) : m_port(port)
 		throw std::runtime_error(std::strerror(errno));
 
 	m_clients.addListener(sock_fd);
+
+	Log::info() << "Server started and listening on port " << port << '\n';
 }
 
 int Server::poll()
@@ -64,7 +75,7 @@ int Server::poll()
 
 	if (::poll(pfds.data(), pfds.size(), POLL_TIMEOUT) == -1)
 	{
-		Log::error() << "poll(): " << std::strerror(errno) << std::endl;
+		Log::error() << "poll(): " << std::strerror(errno) << '\n';
 		return 1;
 	}
 
@@ -75,7 +86,6 @@ int Server::poll()
 		{
 			if (it->fd == pfds[0].fd)
 			{
-				// TODO: make this a function e.g acceptNewClient()
 				socklen_t addrlen = 0;
 				sockaddr addr;
 
@@ -83,26 +93,50 @@ int Server::poll()
 				if (newFd == -1)
 				{
 					Log::error()
-						<< "accept(): " << std::strerror(errno) << std::endl;
+						<< "accept(): " << std::strerror(errno) << '\n';
 					return 2;
 				}
+
+				char ipStr[INET_ADDRSTRLEN];
+				struct sockaddr_in* clientIP =
+					reinterpret_cast<struct sockaddr_in*>(&addr);
+
+				inet_ntop(
+					clientIP->sin_family, &clientIP->sin_addr, ipStr,
+					sizeof(ipStr)
+				);
+
+				Log::info() << "New connection from " << ipStr << " on fd "
+							<< it->fd << "\n";
+
 				m_clients.add(newFd);
 			}
 			else
 			{
-				receive(); // TODO recev and exec
+				Client& client = m_clients.get(it->fd).second;
+				std::string packet = client.receive(it->fd, m_clients);
+				if (!packet.empty())
+				{
+					Message message(packet);
+					logReceivedMessage(message, it->fd);
+					Exec::exec(message, m_clients, it->fd, m_channels);
+				}
 			}
 		}
 	}
 	return 0;
 }
 
+void Server::logReceivedMessage(const Message& message, const int fd)
+{
+	Log::debug() << "Received (fd=" << fd << "): " << message.verb();
+
+	for (size_t i = 0; i < message.parameters().size(); ++i)
+		Log::debug() << " [" << message.parameters()[i] << "]";
+
+	Log::debug() << '\n';
+}
+
 void Server::stop() {}
 
 Server::~Server() {}
-
-Server::Server() : m_port(0) {}
-
-Server::Server(const Server& other) : m_port(0) {}
-
-Server& Server::operator=(const Server& rhs) {}

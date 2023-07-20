@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 18:39:57 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/20 16:07:34 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <vector>
 
 #include "Client.hpp"
+#include "Log.hpp"
 
 ClientsManager::ClientsManager() {}
 
@@ -59,25 +60,34 @@ void ClientsManager::add(int fd)
 
 void ClientsManager::remove(int fd)
 {
-	std::map<int, Client>::iterator ret = m_clients.find(fd);
+	std::map<int, Client>::iterator clientIt = m_clients.find(fd);
 
-	if (ret == m_clients.end())
+	if (clientIt == m_clients.end())
+	{
 		throw std::invalid_argument(
 			"ClientsManager::remove(int fd): fd isn't bound to any Client"
 		);
-	close(ret->first);
-	m_clients.erase(ret);
+	}
+
+	close(clientIt->first);
+	m_clients.erase(clientIt);
+
+	Log::info() << "Client on fd " << fd << " ("
+				<< clientIt->second.getNickname() << ") disconnected\n";
 }
 
 void ClientsManager::remove(const char* nickname)
 {
-	for (std::map<int, Client>::iterator it = m_clients.begin();
-		 it != m_clients.end(); ++it)
+	for (std::map<int, Client>::iterator clientIt = m_clients.begin();
+		 clientIt != m_clients.end(); ++clientIt)
 	{
-		if (it->second.getNickname() == nickname)
+		if (clientIt->second.getNickname() == nickname)
 		{
-			close(it->first);
-			m_clients.erase(it);
+			close(clientIt->first);
+			m_clients.erase(clientIt);
+
+			Log::info() << "Client on fd " << clientIt->first << " ("
+						<< clientIt->second.getNickname() << ") disconnected\n";
 			return;
 		}
 	}

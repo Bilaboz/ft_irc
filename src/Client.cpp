@@ -6,16 +6,19 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 18:15:47 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 20:56:01 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/20 16:03:59 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Client.hpp"
+#include <cerrno>
+
+#include "ClientsManager.hpp"
 
 Client::Client() {}
 
 Client::Client(const Client& other)
-	: m_nickname(other.m_nickname), m_username(other.m_username), buf(other.buf)
+	: m_nickname(other.m_nickname), m_username(other.m_username),
+	  m_buffer(other.m_buffer)
 {
 }
 
@@ -25,7 +28,7 @@ Client& Client::operator=(const Client& rhs)
 	{
 		m_nickname = rhs.m_nickname;
 		m_username = rhs.m_username;
-		buf = rhs.buf;
+		m_buffer = rhs.m_buffer;
 	}
 
 	return *this;
@@ -61,4 +64,13 @@ void Client::setNickname(const char* nickname)
 void Client::setRealname(const char* realname)
 {
 	m_realname = realname;
+}
+
+std::string Client::receive(int fd, ClientsManager& clients)
+{
+	if (m_buffer.receive(fd) == PacketBuffer::CLIENT_DISCONNECTED ||
+		errno == ECONNRESET)
+		clients.remove(fd);
+
+	return m_buffer.getPacket();
 }
