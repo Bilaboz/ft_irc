@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 22:59:15 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/21 00:14:32 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <utility>
 
 #include "Client.hpp"
+#include "Log.hpp"
 
 const std::map<std::string, Exec::func> Exec::m_functions = Exec::initTable();
 
@@ -52,6 +53,31 @@ Exec::ChannelsIt Exec::findChannel(
 	}
 
 	return channels.end();
+}
+
+void Exec::sendToClient(
+	const FdClient& client, const std::string& message, bool includeSource
+)
+{
+	std::string source;
+	if (includeSource)
+		source = client.second.getSource() + " ";
+
+	size_t bytesSent = 0;
+	std::string data = source + message + "\r\n";
+
+	while (bytesSent < data.size())
+	{
+		ssize_t sent =
+			send(client.first, data.c_str() + bytesSent, data.size(), 0);
+		if (sent == -1)
+		{
+			Log::error() << "send(): " << std::strerror(errno) << '\n';
+			return;
+		}
+
+		bytesSent += sent;
+	}
 }
 
 int Exec::topic(

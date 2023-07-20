@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 15:22:15 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 15:54:39 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/20 19:29:49 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,9 @@ class Client
 	void setRealname(const char* realname);
 
 	std::string receive(int fd, ClientsManager& clients);
+	void reply(const std::string& message, bool includeSource = true) const;
+
+	std::string getSource() const;
 
   private:
 	std::string m_nickname;

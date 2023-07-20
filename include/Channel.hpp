@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:07 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 22:17:30 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/21 00:12:11 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,13 @@ class Channel
 	std::string getTopic() const;
 	void setTopic(const std::string& topic);
 
-	bool inviteOnly;
-	bool isTopicProtected;
+	void send(
+		const FdClient& author, const std::string& message,
+		bool includeSource = false, bool sendToAuthor = false
+	);
+
+	bool inviteOnly;	   // NOLINT
+	bool isTopicProtected; // NOLINT
 
 	enum
 	{
