@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 15:22:15 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 20:46:06 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/20 15:54:39 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include "PacketBuffer.hpp"
 
 class Channel;
+class ClientsManager;
 
 class Client
 {
@@ -37,11 +38,13 @@ class Client
 	void setNickname(const char* nickname);
 	void setRealname(const char* realname);
 
+	std::string receive(int fd, ClientsManager& clients);
+
   private:
 	std::string m_nickname;
 	std::string m_username;
 	std::string m_realname;
-	PacketBuffer buf;
+	PacketBuffer m_buffer;
 };
 
 typedef std::pair<const int, Client> FdClient;
