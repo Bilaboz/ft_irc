@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/20 17:15:36 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 18:09:55 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/20 18:16:53 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int main(int argc, char** argv)
 	{
 		Log::error() << e.what() << '\n';
 	}
-	catch(std::invalid_argument& e)
+	catch (std::invalid_argument& e)
 	{
 		Log::error() << e.what() << '\n';
 	}

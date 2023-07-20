@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 17:57:15 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/20 18:18:11 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int Exec::topic(
 		return 0;
 	}
 
-	ChannelsIt channelIt = findChannel(channels, message.parameters().front());
+	const ChannelsIt channelIt = findChannel(channels, message.parameters().front());
 	if (channelIt == channels.end())
 	{
 		// ERR_NOSUCHCHANNEL (403)

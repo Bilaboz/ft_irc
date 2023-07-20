@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 18:03:20 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/20 18:17:55 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void ClientsManager::add(int fd)
 
 void ClientsManager::remove(int fd)
 {
-	std::map<int, Client>::iterator clientIt = m_clients.find(fd);
+	const std::map<int, Client>::iterator clientIt = m_clients.find(fd);
 
 	if (clientIt == m_clients.end())
 	{

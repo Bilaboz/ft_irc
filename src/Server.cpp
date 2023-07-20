@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:21:58 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 18:02:18 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/20 18:19:05 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ int Server::poll()
 				std::string packet = client.receive(pfds[i].fd, m_clients);
 				if (!packet.empty())
 				{
-					Message message(packet);
+					const Message message(packet);
 					logReceivedMessage(message, pfds[i].fd);
 					Exec::exec(message, m_clients, pfds[i].fd, m_channels);
 				}
