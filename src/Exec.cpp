@@ -6,13 +6,14 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/21 15:01:24 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/21 15:12:02 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Exec.hpp"
 
 #include <map>
+#include <stdexcept>
 #include <utility>
 
 #include "Client.hpp"
@@ -38,6 +39,7 @@ std::map<std::string, Exec::func> Exec::initTable()
 	ret.insert(std::make_pair("KICK", &Exec::kick));
 	ret.insert(std::make_pair("USER", &Exec::user));
 	ret.insert(std::make_pair("TOPIC", &Exec::topic));
+	ret.insert(std::make_pair("INVITE", &Exec::invite));
 
 	return ret;
 }
@@ -125,7 +127,7 @@ int Exec::user(
 {
 	(void)channels;
 	const std::vector<std::string>& parameters = message.parameters();
-	if (parameters.size() != 4 || parameters[3].empty())
+	if (parameters.size() < 4 || parameters[3].empty())
 	{
 		// TODO: ERR_NEEDMOREPARAMS (461) --> fd
 		return 0;
@@ -335,4 +337,53 @@ int Exec::part(
 		}
 	}
 	return 0;
+}
+
+int Exec::invite(
+	const Message& message, ClientsManager& clients, int fd,
+	std::vector<Channel>& channels
+)
+{
+	const std::vector<std::string>& parameters = message.parameters();
+	if (parameters.size() < 2)
+	{
+		// TODO: ERR_NEEDMOREPARAMS (461) --> fd
+		return 0;
+	}
+
+	FdClient& sender = clients.get(fd);
+	ChannelsIt channel = findChannel(channels, parameters[1]);
+	if (channel == channels.end())
+	{
+		// TODO: ERR_NOSUCHCHANNEL (403) --> fd
+		return 0;
+	}
+	if (!channel->isUser(sender))
+	{
+		// TODO: ERR_NOTONCHANNEL (442) --> fd
+		return 0;
+	}
+	if (channel->inviteOnly && (!channel->isOperator(sender)))
+	{
+		// TODO: ERR_CHANOPRIVSNEEDED (482) --> fd
+		return 0;
+	}
+
+	try
+	{
+		FdClient& target = clients.get(parameters[0].c_str());
+		if (channel->isUser(target))
+		{
+			// TODO: ERR_USERONCHANNEL (443) --> fd
+			return 0;
+		}
+		// TODO: RPL_INVITING (341) --> fd
+		// TODO: <sender source> INVITE target channel
+		return 0;
+	}
+	catch (std::invalid_argument& e)
+	{
+		// TODO: ERR_NOSUCHNICK (401) --> fd
+		return 0;
+	}
 }
