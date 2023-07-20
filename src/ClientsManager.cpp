@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 18:17:55 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/20 18:53:47 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ void ClientsManager::remove(int fd)
 				<< clientIt->second.getNickname() << ") disconnected\n";
 
 	close(clientIt->first);
+	this->removePollFd(clientIt->first);
 	m_clients.erase(clientIt);
 }
 
@@ -84,6 +85,7 @@ void ClientsManager::remove(const char* nickname)
 		if (clientIt->second.getNickname() == nickname)
 		{
 			close(clientIt->first);
+			this->removePollFd(clientIt->first);
 			m_clients.erase(clientIt);
 
 			Log::info() << "Client on fd " << clientIt->first << " ("
@@ -179,4 +181,17 @@ void ClientsManager::addPollFd(int fd)
 	newElem.events = POLLIN;
 	newElem.revents = 0;
 	m_fds.push_back(newElem);
+}
+
+void ClientsManager::removePollFd(int fd)
+{
+	for (std::vector<pollfd>::iterator it = m_fds.begin(); it != m_fds.end();
+		 ++it)
+	{
+		if (it->fd == fd)
+		{
+			m_fds.erase(it);
+			return;
+		}
+	}
 }
