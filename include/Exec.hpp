@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 14:30:38 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 18:20:48 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/20 17:32:52 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define EXEC_HPP
 
 #include <map>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -36,6 +37,10 @@ class Exec
 	static const std::map<std::string, func> m_functions;
 
 	static std::map<std::string, func> initTable();
+	static bool isNicknameValid(const std::string& str);
+	static std::vector<std::string> splitChar(
+		const std::string& str, char c = ','
+	);
 	static ChannelsIt findChannel(
 		std::vector<Channel>& channels, const std::string& name
 	);

@@ -6,7 +6,7 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 17:54:41 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/19 18:14:00 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/20 16:39:48 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 #define ERR_NOSUCHCHANNEL "403"
 #define ERR_NEEDMOREPARAMS "461"
 #define ERR_CHANOPRIVSNEEDED "482"
+		// TODO ERR_NONICKNAMEGIVEN (431);
+		// TODO ERR_NICKNAMEINUSE (433);
 
 
 #endif

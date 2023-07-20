@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:07 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 17:04:10 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/20 20:37:34 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,9 @@ class Channel
 		SUCCESS = 0,
 		USER_NOEXIST,
 		USER_ALREADY,
-		WRONG_PASSWORD
+		WRONG_PASSWORD,
+		CHANNELISFULL,
+		INVITEONLYCHAN
 	};
 
   private:

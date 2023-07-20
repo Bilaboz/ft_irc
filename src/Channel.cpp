@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:18 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 17:10:14 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/20 20:37:48 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,10 @@ int Channel::add(FdClient& user, const char* password)
 	{
 		if (m_password != password)
 			return WRONG_PASSWORD;
+		if (m_users.size() == (size_t)m_userLimit)
+			return CHANNELISFULL;
+		if (inviteOnly && ! isInvited(user))
+			return INVITEONLYCHAN;
 		m_users.push_back(&user);
 		return SUCCESS;
 	}
@@ -123,6 +127,7 @@ int Channel::retrograde(FdClient& user)
 
 	return USER_ALREADY;
 }
+
 
 // void Channel::msg(char* msg, const FdClient& sender) {}
 
