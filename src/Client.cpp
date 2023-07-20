@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 18:15:47 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 19:29:42 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/21 00:20:13 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@
 Client::Client() {}
 
 Client::Client(const Client& other)
-	: m_nickname(other.m_nickname),
-	  m_username(other.m_username), m_buffer(other.m_buffer)
+	: m_nickname(other.m_nickname), m_username(other.m_username),
+	  m_buffer(other.m_buffer)
 {
 }
 
@@ -89,9 +89,8 @@ std::string Client::getSource() const
 	if (!m_username.empty())
 		source << '!' << m_username;
 
-	//if (!m_host.empty())
+	// if (!m_host.empty())
 	//	source << '@' << m_host;
 
 	return source.str();
 }
-

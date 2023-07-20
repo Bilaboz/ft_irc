@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/21 00:14:32 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/21 00:20:39 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void Exec::sendToClient(
 
 	while (bytesSent < data.size())
 	{
-		ssize_t sent =
+		const ssize_t sent =
 			send(client.first, data.c_str() + bytesSent, data.size(), 0);
 		if (sent == -1)
 		{
