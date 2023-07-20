@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 21:01:20 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/20 17:27:44 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,11 @@ std::map<std::string, Exec::func> Exec::initTable()
 {
 	std::map<std::string, func> ret;
 
-	ret.insert(std::make_pair("JOIN", &Exec::join));
-	ret.insert(std::make_pair("NICK", &Exec::nick));
-	ret.insert(std::make_pair("KICK", &Exec::kick));
+	//ret.insert(std::make_pair("JOIN", &Exec::join));
+	//ret.insert(std::make_pair("NICK", &Exec::nick));
+	//ret.insert(std::make_pair("KICK", &Exec::kick));
+	ret.insert(std::make_pair("USER", &Exec::user));
+	ret.insert(std::make_pair("TOPIC", &Exec::topic));
 
 	return ret;
 }

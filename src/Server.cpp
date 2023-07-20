@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:21:58 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 16:24:58 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/20 17:36:41 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #include "Log.hpp"
 #include "Message.hpp"
 
-Server::Server(int port)
+Server::Server(const char* port)
 {
 	int sock_fd = 0;
 	int yes = 1;
@@ -33,10 +33,11 @@ Server::Server(int port)
 	hints.ai_flags = AI_PASSIVE;
 
 	addrinfo* result = NULL;
-	std::stringstream ss;
-	ss << port;
-	if (getaddrinfo(NULL, ss.str().c_str(), &hints, &result) != 0)
+	if (getaddrinfo(NULL, port, &hints, &result) != 0)
+	{
+		freeaddrinfo(result);
 		throw std::runtime_error(std::strerror(errno));
+	}
 
 	addrinfo* tmp = NULL;
 	for (tmp = result; tmp != NULL; tmp = tmp->ai_next)
@@ -47,13 +48,18 @@ Server::Server(int port)
 
 		// get rid of "address already in use" error message
 		if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)))
+		{
+			freeaddrinfo(result);
 			throw std::runtime_error(std::strerror(errno));
+		}
 
 		if (bind(sock_fd, tmp->ai_addr, tmp->ai_addrlen) < 0)
 		{
 			close(sock_fd);
 			continue;
 		}
+
+		break ;
 	}
 
 	freeaddrinfo(result);
