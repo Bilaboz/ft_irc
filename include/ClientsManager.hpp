@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:51:44 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/18 15:02:26 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/19 18:40:12 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ class ClientsManager
 	const FdClient& get(int fd) const;
 	FdClient& get(const char* nickname);
 	const FdClient& get(const char* nickname) const;
-	const std::vector<pollfd>& getPollfds() const;
+	std::vector<pollfd>& getPollfds();
 	bool isNicknameUsed(const char* nick) const;
 
   private:

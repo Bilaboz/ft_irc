@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/18 15:02:07 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/19 18:39:57 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,7 @@ const FdClient& ClientsManager::get(const char* nickname) const
 	throw std::invalid_argument(exception);
 }
 
-const std::vector<pollfd>& ClientsManager::getPollfds() const
+std::vector<pollfd>& ClientsManager::getPollfds()
 {
 	return m_fds;
 }

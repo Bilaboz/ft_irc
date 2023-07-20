@@ -6,19 +6,28 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 17:38:44 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/18 14:33:38 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/19 18:39:24 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include <netdb.h>
 #include <poll.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 
+#include <cerrno>
 #include <map>
 #include <vector>
 
 #include "ClientsManager.hpp"
+#include "Log.hpp"
+
+#define POLL_TIMEOUT 1000
+#define BACKLOG 10
 
 class Server
 {
