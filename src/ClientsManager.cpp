@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 16:07:34 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/20 16:33:35 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,26 +102,26 @@ void ClientsManager::remove(const char* nickname)
 
 FdClient& ClientsManager::get(int fd)
 {
-	std::map<int, Client>::iterator ret = m_clients.find(fd);
+	const std::map<int, Client>::iterator clientIt = m_clients.find(fd);
 
-	if (ret == m_clients.end())
+	if (clientIt == m_clients.end())
 		throw std::invalid_argument(
 			"ClientsManager::get(int fd): fd isn't bound to any Client"
 		);
 
-	return *ret;
+	return *clientIt;
 }
 
 const FdClient& ClientsManager::get(int fd) const
 {
-	std::map<int, Client>::const_iterator ret = m_clients.find(fd);
+	const std::map<int, Client>::const_iterator clientIt = m_clients.find(fd);
 
-	if (ret == m_clients.end())
+	if (clientIt == m_clients.end())
 		throw std::invalid_argument(
 			"ClientsManager::get(int fd): fd isn't bound to any Client"
 		);
 
-	return *ret;
+	return *clientIt;
 }
 
 FdClient& ClientsManager::get(const char* nickname)

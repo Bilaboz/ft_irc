@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 17:38:44 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 16:25:59 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/20 16:34:49 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 #define POLL_TIMEOUT 1000
 #define BACKLOG 10
 
-class Server
+class Server // NOLINT
 {
   public:
 	Server(int port);
