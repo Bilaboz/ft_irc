@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 22:43:08 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/20 22:57:51 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ int Exec::nick(
 {
 	(void)channels;
 	std::vector<std::string> params = message.parameters();
-	std::string nickname = params.front();
+	const std::string nickname = params.front();
 	if (nickname.empty())
 	{
 		// TODO ERR_NONICKNAMEGIVEN (431);

@@ -6,12 +6,12 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 17:54:41 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/20 22:01:21 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/20 22:55:42 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RPL_HPP
-# define RPL_HPP
+#define RPL_HPP
 
 #define RPL_WELCOME "001"
 #define RPL_NOTOPIC "331"
@@ -29,6 +29,5 @@
 #define ERR_INVITEONLYCHAN "473"
 #define ERR_BADCHANNELKEY "475"
 #define ERR_CHANOPRIVSNEEDED "482"
-
 
 #endif
