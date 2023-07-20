@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 22:57:51 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/20 22:59:15 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,7 +242,7 @@ int Exec::join(
 	std::vector<std::string> passwords = splitChar(params[1], ',');
 	for (size_t i = 0; i != toJoin.size(); i++)
 	{
-		ChannelsIt tmpChan = findChannel(channels, toJoin[i]);
+		const ChannelsIt tmpChan = findChannel(channels, toJoin[i]);
 		if (tmpChan != channels.end())
 		{
 			// TODO ERR_NOSUCHCHANNEL (403);
@@ -292,7 +292,7 @@ int Exec::part(
 	std::vector<std::string> toLeave = splitChar(params.front(), ',');
 	for (size_t i = 0; i != toLeave.size(); i++)
 	{
-		ChannelsIt tmpChan = findChannel(channels, toLeave[i]);
+		const ChannelsIt tmpChan = findChannel(channels, toLeave[i]);
 		if (tmpChan != channels.end())
 		{
 			// TODO ERR_NOSUCHCHANNEL (403);
