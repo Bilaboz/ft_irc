@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:51:44 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/19 18:40:12 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/20 18:44:59 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ class ClientsManager
 	std::map<int, Client> m_clients;
 
 	void addPollFd(int fd);
+	void removePollFd(int fd);
 };
 
 #endif
