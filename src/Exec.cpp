@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 21:13:47 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/20 22:43:08 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ std::map<std::string, Exec::func> Exec::initTable()
 {
 	std::map<std::string, func> ret;
 
-	//ret.insert(std::make_pair("JOIN", &Exec::join));
-	//ret.insert(std::make_pair("NICK", &Exec::nick));
-	//ret.insert(std::make_pair("KICK", &Exec::kick));
+	ret.insert(std::make_pair("JOIN", &Exec::join));
+	ret.insert(std::make_pair("NICK", &Exec::nick));
+	ret.insert(std::make_pair("KICK", &Exec::kick));
 	ret.insert(std::make_pair("USER", &Exec::user));
 	ret.insert(std::make_pair("TOPIC", &Exec::topic));
 
@@ -65,7 +65,8 @@ int Exec::topic(
 		return 0;
 	}
 
-	const ChannelsIt channelIt = findChannel(channels, message.parameters().front());
+	const ChannelsIt channelIt =
+		findChannel(channels, message.parameters().front());
 	if (channelIt == channels.end())
 	{
 		// ERR_NOSUCHCHANNEL (403)
@@ -107,7 +108,7 @@ int Exec::user(
 	FdClient& client = clients.get(fd);
 	if (!client.second.getUsername().empty())
 	{
-		// TODO: ERR_ALREADYREGISTERED (462) --> fd
+		// TODO: ERR_ALREADYREGISTERED "462" --> fd
 		return 0;
 	}
 	client.second.setUsername(parameters[0].c_str());
@@ -145,10 +146,9 @@ int Exec::nick(
 
 	if (!isNicknameValid(nickname))
 	{
-		// TODO ERR_ERRONEUSNICKNAME (432);
+		// TODO ERR_ERRONEUSNICKNAME "432";
 		return 2;
 	}
-
 
 	FdClient& client = clients.get(fd);
 	if (clients.isNicknameUsed(nickname.c_str()))
@@ -203,21 +203,22 @@ int Exec::kick(
 		{
 			if (tmpChan->isUser(client))
 			{
-				// TODO ERR_NOTONCHANNEL (482);
+				// TODO ERR_NOTONCHANNEL (442);
 				break;
 			}
 			if (tmpChan->isOperator(client))
 			{
-				// TODO ERR_CHANOPRIVSNEEDED (482);
+				// TODO ERR_CHANOPRIVSNEEDED "482";
 				break;
 			}
 			if (tmpChan->isUser(clients.get((*nickIt).c_str())))
 			{
-				// TODO ERR_USERNOTINCHANNEL (441);
+				// TODO ERR_USERNOTINCHANNEL "441";
 				continue;
 			}
 			tmpChan->kick(clients.get((*nickIt).c_str()));
-			//TODO send to every user in tmpChan the ban message with optional reasons
+			// TODO send to every user in tmpChan the ban message with optional
+			// reasons
 		}
 	}
 
@@ -239,10 +240,9 @@ int Exec::join(
 	}
 	std::vector<std::string> toJoin = splitChar(params.front(), ',');
 	std::vector<std::string> passwords = splitChar(params[1], ',');
-	ChannelsIt tmpChan;
 	for (size_t i = 0; i != toJoin.size(); i++)
 	{
-		tmpChan = findChannel(channels, toJoin[i]);
+		ChannelsIt tmpChan = findChannel(channels, toJoin[i]);
 		if (tmpChan != channels.end())
 		{
 			// TODO ERR_NOSUCHCHANNEL (403);
@@ -250,29 +250,63 @@ int Exec::join(
 		}
 		switch (tmpChan->add(client, passwords[i].c_str()))
 		{
-			case Channel::SUCCESS:
-				/*TODO 
-				~ send to client and all in the channel "<name> JOIN <channel>"
-				~ may send a MODE msg with current channel MODE
-				~ Sends them RPL_TOPIC and RPL_TOPICTIME numerics if the channel has a topic set
-						(if the topic is not set, the user is sent no numerics)
-				~ Sends them one or more RPL_NAMREPLY numerics
-						(which also contain the name of the user that’s joining)*/
-				break;
-			case Channel::USER_ALREADY:
-				//TODO no idea
-				break;
-			case Channel::WRONG_PASSWORD:
-				//TODO ERR_BADCHANNELKEY
-				break;
-			case Channel::CHANNELISFULL:
-				//TODO ERR_CHANNELISFULL
-				break;
-			case Channel::INVITEONLYCHAN:
-				//TODO ERR_INVITEONLYCHAN
-				break;
+		case Channel::SUCCESS:
+			/*TODO
+			~ send to client and all in the channel "<name> JOIN <channel>"
+			~ may send a MODE msg with current channel MODE
+			~ Sends them RPL_TOPIC and RPL_TOPICTIME numerics if the channel has
+			a topic set (if the topic is not set, the user is sent no numerics)
+			~ Sends them one or more RPL_NAMREPLY numerics
+					(which also contain the name of the user that’s joining)*/
+			break;
+		case Channel::USER_ALREADY:
+			// TODO no idea
+			break;
+		case Channel::WRONG_PASSWORD:
+			// TODO ERR_BADCHANNELKEY "475"
+			break;
+		case Channel::CHANNELISFULL:
+			// TODO ERR_CHANNELISFULL "471"
+			break;
+		case Channel::INVITEONLYCHAN:
+			// TODO ERR_INVITEONLYCHAN "473"
+			break;
 		}
+	}
+	return 0;
+}
 
+int Exec::part(
+	const Message& message, ClientsManager& clients, int fd,
+	std::vector<Channel>& channels
+)
+{
+	FdClient& client = clients.get(fd);
 
+	const std::vector<std::string>& params = message.parameters();
+	if (params.empty())
+	{
+		// TODO ERR_NEEDMOREPARAMS (461);
+		return 1;
+	}
+	std::vector<std::string> toLeave = splitChar(params.front(), ',');
+	for (size_t i = 0; i != toLeave.size(); i++)
+	{
+		ChannelsIt tmpChan = findChannel(channels, toLeave[i]);
+		if (tmpChan != channels.end())
+		{
+			// TODO ERR_NOSUCHCHANNEL (403);
+			continue;
+		}
+		if (tmpChan->kick(client))
+		{
+			// TODO send "<name> leaving the channel <channel>" to everybody in
+			// channel
+		}
+		else
+		{
+			// TODO ERR_NOTONCHANNEL (442)
+		}
+	}
 	return 0;
 }

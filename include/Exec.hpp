@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 14:30:38 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 17:32:52 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/20 22:37:14 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,10 @@ class Exec
 	topic(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
 	static int
 	user(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	static int
+	part(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	static int
+	privmsg(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
 };
 
 #endif
