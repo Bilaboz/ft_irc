@@ -6,12 +6,11 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:21:58 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 14:18:44 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/20 14:23:37 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-
 
 Server::Server(int port) : m_port(port)
 {
@@ -81,7 +80,7 @@ int Server::poll()
 				socklen_t addrlen = 0;
 				sockaddr addr;
 
-				int newFd = accept(it->fd, &addr, &addrlen);
+				const int newFd = accept(it->fd, &addr, &addrlen);
 				if (newFd == -1)
 					Log::error()
 						<< "accept(): " << std::strerror(errno) << std::endl;
@@ -90,7 +89,7 @@ int Server::poll()
 			}
 			else
 			{
-				receive() // TODO recev and exec
+				receive(); // TODO recev and exec
 			}
 		}
 	}
