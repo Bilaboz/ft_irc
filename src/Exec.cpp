@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/21 15:12:02 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/21 15:17:30 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -351,8 +351,8 @@ int Exec::invite(
 		return 0;
 	}
 
-	FdClient& sender = clients.get(fd);
-	ChannelsIt channel = findChannel(channels, parameters[1]);
+	const FdClient& sender = clients.get(fd);
+	const ChannelsIt channel = findChannel(channels, parameters[1]);
 	if (channel == channels.end())
 	{
 		// TODO: ERR_NOSUCHCHANNEL (403) --> fd
@@ -371,7 +371,7 @@ int Exec::invite(
 
 	try
 	{
-		FdClient& target = clients.get(parameters[0].c_str());
+		const FdClient& target = clients.get(parameters[0].c_str());
 		if (channel->isUser(target))
 		{
 			// TODO: ERR_USERONCHANNEL (443) --> fd
