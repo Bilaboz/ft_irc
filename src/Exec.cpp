@@ -6,18 +6,20 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/21 15:17:30 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/21 16:55:01 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Exec.hpp"
 
+#include <sys/socket.h>
+
 #include <map>
 #include <stdexcept>
-#include <utility>
 
 #include "Client.hpp"
 #include "Log.hpp"
+#include "RPL.hpp"
 
 const std::map<std::string, Exec::func> Exec::m_functions = Exec::initTable();
 
@@ -57,16 +59,10 @@ Exec::ChannelsIt Exec::findChannel(
 	return channels.end();
 }
 
-void Exec::sendToClient(
-	const FdClient& client, const std::string& message, bool includeSource
-)
+void Exec::sendToClient(const FdClient& client, const std::string& message)
 {
-	std::string source;
-	if (includeSource)
-		source = client.second.getSource() + " ";
-
 	size_t bytesSent = 0;
-	const std::string data = source + message + "\r\n";
+	const std::string data = message + "\r\n";
 
 	while (bytesSent < data.size())
 	{
@@ -87,9 +83,10 @@ int Exec::topic(
 	std::vector<Channel>& channels
 )
 {
+	const FdClient client = clients.get(fd);
 	if (message.parameters().empty())
 	{
-		// ERR_NEEDMOREPARAMS (461)
+		sendToClient(client, ERR_NEEDMOREPARAMS "TOPIC :Need more parameters");
 		return 0;
 	}
 
@@ -188,13 +185,13 @@ int Exec::nick(
 	return 0;
 }
 
-std::vector<std::string> Exec::splitChar(const std::string& str, char c)
+std::vector<std::string> Exec::splitChar(const std::string& str, char del)
 {
 	std::vector<std::string> ret;
 	std::stringstream stream(str);
 	std::string token;
 
-	while (std::getline(stream, token, c))
+	while (std::getline(stream, token, del))
 		ret.push_back(token);
 
 	return ret;
