@@ -6,7 +6,7 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 17:54:41 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/21 19:23:13 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/21 19:27:04 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 #define ERR_USERNOTINCHANNEL(client, nick, channel)                            \
 	"441 " client " " nick " " channel " :User(s) not on channel"
 #define ERR_NOTONCHANNEL(client, channel)                                      \
-	"442 " + cleint " " channel " :You're not on that channel"
+	"442 " client " " channel " :You're not on that channel"
 #define ERR_USERONCHANNEL(client, nick, channel)                               \
 	"443 " client " " nick " " channel " :is already on channel"
 #define ERR_NEEDMOREPARAMS(client, command)                                    \
@@ -43,7 +43,7 @@
 #define ERR_INVITEONLYCHAN(client, channel)                                    \
 	"473 " client " " channel " :Cannot join channel (+i)"
 #define ERR_BADCHANNELKEY(client, channel)                                     \
-	"475 " + client " " channel " :Cannot join channel (+k)"
+	"475 " client " " channel " :Cannot join channel (+k)"
 #define ERR_CHANOPRIVSNEEDED                                                   \
 	"482 " client " " channel " :You're not channel operator"
 
