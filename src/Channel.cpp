@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:18 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 22:57:20 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/21 00:13:04 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "Client.hpp"
+#include "Exec.hpp"
 
 Channel::Channel() {}
 
@@ -167,4 +168,21 @@ std::string Channel::getTopic() const
 void Channel::setTopic(const std::string& topic)
 {
 	m_topic = topic;
+}
+
+void Channel::send(
+	const FdClient& author, const std::string& message, bool includeSource,
+	bool sendToAuthor
+)
+{
+	std::string source;
+	if (includeSource)
+		source = author.second.getSource();
+
+	for (std::vector<FdClient*>::iterator it = m_users.begin();
+		 it != m_users.end(); ++it)
+	{
+		if (&author != *it || sendToAuthor)
+			Exec::sendToClient(**it, source + message, false);
+	}
 }

@@ -6,11 +6,13 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 18:15:47 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 18:06:13 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/21 00:20:13 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cerrno>
+#include <cstring>
+#include <sstream>
 
 #include "ClientsManager.hpp"
 
@@ -76,4 +78,19 @@ std::string Client::receive(int fd, ClientsManager& clients)
 	}
 
 	return m_buffer.getPacket();
+}
+
+std::string Client::getSource() const
+{
+	std::stringstream source;
+
+	source << ':' << m_nickname;
+
+	if (!m_username.empty())
+		source << '!' << m_username;
+
+	// if (!m_host.empty())
+	//	source << '@' << m_host;
+
+	return source.str();
 }
