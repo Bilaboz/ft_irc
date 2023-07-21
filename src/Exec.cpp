@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/21 16:55:01 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/22 00:04:09 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,25 +161,37 @@ int Exec::nick(
 )
 {
 	(void)channels;
+	FdClient& client = clients.get(fd);
 	std::vector<std::string> params = message.parameters();
+	if (params.size() < 2)
+	{
+		sendToClient(
+			client, ERR_NEEDMOREPARAMS(client.second.getNickname(), "nick")
+		);
+		return 1;
+	}
+
 	const std::string nickname = params.front();
 	if (nickname.empty())
 	{
-		// TODO ERR_NONICKNAMEGIVEN (431);
+		sendToClient(client, ERR_NONICKNAMEGIVEN(client.second.getNickname()));
 		return 1;
 	}
 
 	if (!isNicknameValid(nickname))
 	{
-		// TODO ERR_ERRONEUSNICKNAME "432";
-		return 2;
+		sendToClient(
+			client, ERR_ERRONEUSNICKNAME(client.second.getNickname(), nickname)
+		);
+		return 1;
 	}
 
-	FdClient& client = clients.get(fd);
 	if (clients.isNicknameUsed(nickname.c_str()))
 	{
-		// TODO ERR_NICKNAMEINUSE (433);
-		return 3;
+		sendToClient(
+			client, ERR_NICKNAMEINUSE(client.second.getNickname(), nickname)
+		);
+		return 1;
 	}
 	client.second.setNickname(nickname.c_str());
 	return 0;
@@ -207,7 +219,9 @@ int Exec::kick(
 	std::vector<std::string> params = message.parameters();
 	if (params.size() < 2)
 	{
-		// TODO ERR_NEEDMOREPARAMS (461);
+		sendToClient(
+			client, ERR_NEEDMOREPARAMS(client.second.getNickname(), "kick")
+		);
 		return 1;
 	}
 
@@ -220,7 +234,11 @@ int Exec::kick(
 		tmpChan = findChannel(channels, *channelIt);
 		if (tmpChan != channels.end())
 		{
-			// TODO ERR_NOSUCHCHANNEL (403);
+			sendToClient(
+				client, ERR_NOSUCHCHANNEL(
+							client.second.getNickname(), tmpChan->getName()
+						)
+			);
 			continue;
 		}
 		for (std::vector<std::string>::iterator nickIt = passwords.begin();
@@ -228,26 +246,60 @@ int Exec::kick(
 		{
 			if (tmpChan->isUser(client))
 			{
-				// TODO ERR_NOTONCHANNEL (442);
+				sendToClient(
+					client, ERR_NOTONCHANNEL(
+								client.second.getNickname(), tmpChan->getName()
+							)
+				);
 				break;
 			}
 			if (tmpChan->isOperator(client))
 			{
-				// TODO ERR_CHANOPRIVSNEEDED "482";
+				sendToClient(
+					client, ERR_CHANOPRIVSNEEDED(
+								client.second.getNickname(), tmpChan->getName()
+							)
+				);
 				break;
 			}
 			if (tmpChan->isUser(clients.get((*nickIt).c_str())))
 			{
-				// TODO ERR_USERNOTINCHANNEL "441";
+				sendToClient(
+					client,
+					ERR_USERNOTINCHANNEL(
+						client.second.getNickname(), *nickIt, tmpChan->getName()
+					)
+				);
 				continue;
 			}
 			tmpChan->kick(clients.get((*nickIt).c_str()));
-			// TODO send to every user in tmpChan the ban message with optional
-			// reasons
+			if (params[2].empty())
+				tmpChan->send(
+					client, "KICK " + tmpChan->getName() + " " + *nickIt
+				);
+			else
+				tmpChan->send(
+					client, "KICK " + tmpChan->getName() + " " + *nickIt +
+								" :" + params[2]
+				);
 		}
 	}
-
 	return 0;
+}
+
+std::string Exec::usersName(Channel& chan)
+{
+	std::vector<FdClient*> vec = chan.getUsers();
+	std::string ret = ":" + vec[0]->second.getNickname();
+	for (size_t i = 1; i != vec.size(); i++)
+	{
+		std::string tmp = " ";
+		if (chan.isOperator(*vec[i]))
+			tmp += "@";
+		tmp.append(vec[i]->second.getNickname());
+		ret.append(tmp);
+	}
+	return ret;
 }
 
 int Exec::join(
@@ -260,7 +312,9 @@ int Exec::join(
 	const std::vector<std::string>& params = message.parameters();
 	if (params.size() < 2)
 	{
-		// TODO ERR_NEEDMOREPARAMS (461);
+		sendToClient(
+			client, ERR_NEEDMOREPARAMS(client.second.getNickname(), "join")
+		);
 		return 1;
 	}
 	std::vector<std::string> toJoin = splitChar(params.front(), ',');
@@ -270,31 +324,69 @@ int Exec::join(
 		const ChannelsIt tmpChan = findChannel(channels, toJoin[i]);
 		if (tmpChan != channels.end())
 		{
-			// TODO ERR_NOSUCHCHANNEL (403);
+			sendToClient(
+				client, ERR_NOSUCHCHANNEL(
+							client.second.getNickname(), tmpChan->getName()
+						)
+			);
 			continue;
 		}
 		switch (tmpChan->add(client, passwords[i].c_str()))
 		{
 		case Channel::SUCCESS:
-			/*TODO
-			~ send to client and all in the channel "<name> JOIN <channel>"
-			~ may send a MODE msg with current channel MODE
-			~ Sends them RPL_TOPIC and RPL_TOPICTIME numerics if the channel has
-			a topic set (if the topic is not set, the user is sent no numerics)
-			~ Sends them one or more RPL_NAMREPLY numerics
-					(which also contain the name of the user that’s joining)*/
+			// send to client and all in the channel "<name> JOIN <channel>"
+			tmpChan->send(client, "JOIN" + tmpChan->getName(), true, true);
+
+			// Sends them RPL_TOPIC and RPL_TOPICTIME numerics if the channel
+			// has a topic set (if the topic is not set, the user is sent no
+			// numerics)
+			if (!tmpChan->getTopic().empty())
+			{
+				sendToClient(
+					client, RPL_TOPIC(
+								client.second.getNickname(), tmpChan->getName(),
+								tmpChan->getTopic()
+							)
+				);
+				// TODO set who and when a topic is set
+			}
+
+			// Sends them one or more RPL_NAMREPLY numerics and a RPL_ENDOFNAMES
+			//		(which also contain the name of the user that’s joining)
+			sendToClient(
+				client, RPL_NAMREPLY(
+							client.second.getNickname(), tmpChan->getName(),
+							usersName(*tmpChan)
+						)
+			);
+			sendToClient(
+				client,
+				RPL_ENDOFNAMES(client.second.getNickname(), tmpChan->getName())
+			);
 			break;
 		case Channel::USER_ALREADY:
 			// TODO no idea
 			break;
 		case Channel::WRONG_PASSWORD:
-			// TODO ERR_BADCHANNELKEY "475"
+			sendToClient(
+				client, ERR_BADCHANNELKEY(
+							client.second.getNickname(), tmpChan->getName()
+						)
+			);
 			break;
 		case Channel::CHANNELISFULL:
-			// TODO ERR_CHANNELISFULL "471"
+			sendToClient(
+				client, ERR_CHANNELISFULL(
+							client.second.getNickname(), tmpChan->getName()
+						)
+			);
 			break;
 		case Channel::INVITEONLYCHAN:
-			// TODO ERR_INVITEONLYCHAN "473"
+			sendToClient(
+				client, ERR_INVITEONLYCHAN(
+							client.second.getNickname(), tmpChan->getName()
+						)
+			);
 			break;
 		}
 	}
@@ -311,7 +403,9 @@ int Exec::part(
 	const std::vector<std::string>& params = message.parameters();
 	if (params.empty())
 	{
-		// TODO ERR_NEEDMOREPARAMS (461);
+		sendToClient(
+			client, ERR_NEEDMOREPARAMS(client.second.getNickname(), "part")
+		);
 		return 1;
 	}
 	std::vector<std::string> toLeave = splitChar(params.front(), ',');
@@ -320,17 +414,24 @@ int Exec::part(
 		const ChannelsIt tmpChan = findChannel(channels, toLeave[i]);
 		if (tmpChan != channels.end())
 		{
-			// TODO ERR_NOSUCHCHANNEL (403);
+			sendToClient(
+				client, ERR_NOSUCHCHANNEL(
+							client.second.getNickname(), tmpChan->getName()
+						)
+			);
 			continue;
 		}
 		if (tmpChan->kick(client))
-		{
-			// TODO send "<name> leaving the channel <channel>" to everybody in
-			// channel
-		}
+			tmpChan->send(
+				client, "PART" + tmpChan->getName() + params[1], true, true
+			);
 		else
 		{
-			// TODO ERR_NOTONCHANNEL (442)
+			sendToClient(
+				client, ERR_NOTONCHANNEL(
+							client.second.getNickname(), tmpChan->getName()
+						)
+			);
 		}
 	}
 	return 0;
@@ -383,4 +484,60 @@ int Exec::invite(
 		// TODO: ERR_NOSUCHNICK (401) --> fd
 		return 0;
 	}
+}
+
+int Exec::privmsg(
+	const Message& message, ClientsManager& clients, int fd,
+	std::vector<Channel>& channels
+)
+{
+	FdClient& client = clients.get(fd);
+	const std::vector<std::string>& parameters = message.parameters();
+	if (parameters.size() < 2)
+	{
+		sendToClient(
+			client, ERR_NEEDMOREPARAMS(client.second.getNickname(), "privmsg")
+		);
+		return 1;
+	}
+
+	std::vector<std::string> toSend = splitChar(parameters.front(), ',');
+	// check if <text to be send> isEmpty -> send ERR_NOTEXTTOSEND "412 "
+	if (parameters[1].empty())
+	{
+		sendToClient(client, ERR_NOTEXTTOSEND(client.second.getNickname()));
+		return 1;
+	}
+	for (size_t i = 0; i != toSend.size(); i++)
+	{
+		// check if <target> isEmpty -> send ERR_NORECIPIENT "411 "
+		if (toSend[i].empty())
+		{
+			sendToClient(client, ERR_NORECIPIENT(client.second.getNickname()));
+			continue;
+		}
+		// check if it's channel (begin w #)
+		if (toSend[i][0] == '#')
+		{
+			// if chan check if he is in the chan -> send in chan
+			const ChannelsIt tmpChan = findChannel(channels, toSend[i]);
+			if (tmpChan->isUser(client))
+				tmpChan->send(client, parameters[1], true, true);
+		}
+		// if not chan check if it's a nickname -> send to nickname
+		else
+		{
+			if (!clients.isNicknameUsed(toSend[i].c_str()))
+			{
+				sendToClient(
+					client,
+					ERR_NOSUCHNICK(client.second.getNickname(), toSend[i])
+				);
+				continue;
+			}
+			// TODO sendToClient();
+		}
+	}
+
+	return 0;
 }

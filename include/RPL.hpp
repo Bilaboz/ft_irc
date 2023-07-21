@@ -6,7 +6,7 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 17:54:41 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/21 19:57:52 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/21 23:54:33 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,19 @@
 	("333 " + (client) + " " + (channel) + " " + (nick) + " " + (setat))
 #define RPL_INVITING(client, nick, channel)                                    \
 	("341 " + (client) + " " + (nick) + " " channel)
+
+#define RPL_NAMREPLY(client, channel, users)                                   \
+	("353 " + (client) + " = " + (channel) + " " + (users))
+#define RPL_ENDOFNAMES(client, channel)                                        \
+	("366 " + (client) + " " + (channel) + " :End of /NAMES list")
+
 #define ERR_NOSUCHNICK(client, nick)                                           \
 	("401 " + (client) + " " + (nick) + " :No such nick")
 #define ERR_NOSUCHCHANNEL(client, channel)                                     \
 	("403 " + (client) + " " + (channel) + " :No such channel")
+#define ERR_NORECIPIENT(client)                                                \
+	("411 " + (client) + " :No recipient given (PRIVMSG)")
+#define ERR_NOTEXTTOSEND(client) ("412 " + (client) + " :No text to send")
 #define ERR_NONICKNAMEGIVEN(client) ("431 " + (client) + " :No nickname given")
 #define ERR_ERRONEUSNICKNAME(client, nick)                                     \
 	("432 " + (client) + " " + (nick) + " :Erroneus nickname")
@@ -45,11 +54,14 @@
 #define ERR_ALREADYREGISTERED(client)                                          \
 	("462 " + (client) + " :You may not reregister")
 #define ERR_CHANNELISFULL(client, channel)                                     \
-	("471 " + (client) + " " + (channel) + " :Cannot join + (channel) + (+l)")
+	("471 " + (client) + " " + (channel) + " :Cannot join " + (channel) +      \
+	 " (+l)")
 #define ERR_INVITEONLYCHAN(client, channel)                                    \
-	("473 " + (client) + " " + (channel) + " :Cannot join + (channel) + (+i)")
+	("473 " + (client) + " " + (channel) + " :Cannot join " + (channel) +      \
+	 " (+i)")
 #define ERR_BADCHANNELKEY(client, channel)                                     \
-	("475 " + (client) + " " + (channel) + " :Cannot join + (channel) + (+k)")
+	("475 " + (client) + " " + (channel) + " :Cannot join " + (channel) +      \
+	 " (+k)")
 #define ERR_CHANOPRIVSNEEDED(client, channel)                                  \
 	("482 " + (client) + " " + (channel) +                                     \
 	 " :You're not + (channel) + operator")
