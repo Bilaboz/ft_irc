@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 14:30:38 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/21 15:06:46 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/21 16:18:28 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,7 @@ class Exec
 	);
 
 	static void sendToClient(
-		const FdClient& client, const std::string& message,
-		bool includeSource = true
+		const FdClient& client, const std::string& message
 	);
 
   private:
