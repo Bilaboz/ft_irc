@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/21 16:18:05 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/21 16:55:01 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int Exec::topic(
 	std::vector<Channel>& channels
 )
 {
-	FdClient client = clients.get(fd);
+	const FdClient client = clients.get(fd);
 	if (message.parameters().empty())
 	{
 		sendToClient(client, ERR_NEEDMOREPARAMS "TOPIC :Need more parameters");
@@ -185,13 +185,13 @@ int Exec::nick(
 	return 0;
 }
 
-std::vector<std::string> Exec::splitChar(const std::string& str, char c)
+std::vector<std::string> Exec::splitChar(const std::string& str, char del)
 {
 	std::vector<std::string> ret;
 	std::stringstream stream(str);
 	std::string token;
 
-	while (std::getline(stream, token, c))
+	while (std::getline(stream, token, del))
 		ret.push_back(token);
 
 	return ret;

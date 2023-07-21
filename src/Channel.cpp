@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:18 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/21 00:13:04 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/21 16:56:12 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,6 +183,6 @@ void Channel::send(
 		 it != m_users.end(); ++it)
 	{
 		if (&author != *it || sendToAuthor)
-			Exec::sendToClient(**it, source + message, false);
+			Exec::sendToClient(**it, source + message);
 	}
 }
