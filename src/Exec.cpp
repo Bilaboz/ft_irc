@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 00:04:09 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/22 00:18:24 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -491,7 +491,7 @@ int Exec::privmsg(
 	std::vector<Channel>& channels
 )
 {
-	FdClient& client = clients.get(fd);
+	const FdClient& client = clients.get(fd);
 	const std::vector<std::string>& parameters = message.parameters();
 	if (parameters.size() < 2)
 	{
