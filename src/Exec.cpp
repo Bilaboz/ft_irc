@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/21 00:20:39 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/21 15:01:24 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void Exec::sendToClient(
 		source = client.second.getSource() + " ";
 
 	size_t bytesSent = 0;
-	std::string data = source + message + "\r\n";
+	const std::string data = source + message + "\r\n";
 
 	while (bytesSent < data.size())
 	{
