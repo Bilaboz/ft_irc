@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:18 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/21 23:01:25 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/22 00:22:07 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,6 @@ int Channel::retrograde(FdClient& user)
 
 	return USER_ALREADY;
 }
-
 
 // void Channel::msg(char* msg, const FdClient& sender) {}
 
