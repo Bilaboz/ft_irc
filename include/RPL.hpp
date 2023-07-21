@@ -6,7 +6,7 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 17:54:41 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/21 19:48:08 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/21 19:50:21 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@
 	("473 " + client + " " + channel + " :Cannot join + channel + (+i)")
 #define ERR_BADCHANNELKEY(client, channel)                                     \
 	("475 " + client + " " + channel + " :Cannot join + channel + (+k)")
-#define ERR_CHANOPRIVSNEEDED                                                   \
+#define ERR_CHANOPRIVSNEEDED(client, channel)                                                   \
 	("482 " + client + " " + channel + " :You're not + channel + operator")
 
 #endif
