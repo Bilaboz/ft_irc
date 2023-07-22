@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 18:06:27 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/22 18:20:50 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ int Exec::topic(
 	const FdClient client = clients.get(fd);
 	if (message.parameters().empty())
 	{
-		//ERR_NEEDMOREPARAMS
+		// ERR_NEEDMOREPARAMS
 		return 0;
 	}
 
