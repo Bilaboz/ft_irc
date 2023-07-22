@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:18 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/23 00:07:38 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/23 01:32:58 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,11 +196,12 @@ void Channel::send(
 	if (includeSource)
 		source = author.second.getSource();
 
+	source += " ";
 	for (std::vector<FdClient*>::iterator it = m_users.begin();
 		 it != m_users.end(); ++it)
 	{
 		if (&author != *it || sendToAuthor)
-			Exec::sendToClient(**it, source + " " + message);
+			Exec::sendToClient(**it, source + message);
 	}
 }
 

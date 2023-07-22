@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/23 01:17:31 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/23 01:31:16 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -636,7 +636,7 @@ int Exec::whois(
 		);
 		return 1;
 	}
-	std::string targetNick = message.parameters().front();
+	const std::string targetNick = message.parameters().front();
 	if (targetNick.empty())
 	{
 		sendToClient(sender, ERR_NONICKNAMEGIVEN(senderNick));
