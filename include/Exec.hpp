@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 14:30:38 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/21 23:11:56 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/22 22:25:12 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,10 @@ class Exec
 	privmsg(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
 	static int
 	invite(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	static int
+	ping(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	static int
+	quit(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
 };
 
 #endif
