@@ -6,7 +6,7 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 17:54:41 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/22 18:28:26 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/22 20:26:34 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@
 #define ERR_NOTONCHANNEL(client, channel)                                      \
 	("442 " + (client) + " " + (channel) + " :You're not on that channel")
 #define ERR_USERONCHANNEL(client, nick, channel)                               \
-	("443 " + (client) + " " + (nick) + " " + (channel) + " :is already on channel")
+	("443 " + (client) + " " + (nick) + " " + (channel) +                      \
+	 " :is already on channel")
 #define ERR_NEEDMOREPARAMS(client, command)                                    \
 	("461 " + (client) + " " command " :Not enough parameters")
 #define ERR_ALREADYREGISTERED(client)                                          \
