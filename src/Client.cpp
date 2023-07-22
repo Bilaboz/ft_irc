@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 18:15:47 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/21 00:20:13 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/22 19:29:59 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,13 +68,16 @@ void Client::setRealname(const char* realname)
 	m_realname = realname;
 }
 
-std::string Client::receive(int fd, ClientsManager& clients)
+std::string Client::receive(int fd, ClientsManager& clients, bool newPollin)
 {
-	if (m_buffer.receive(fd) == PacketBuffer::CLIENT_DISCONNECTED ||
-		errno == ECONNRESET)
+	if (newPollin)
 	{
-		clients.remove(fd);
-		return "";
+		if (m_buffer.receive(fd) == PacketBuffer::CLIENT_DISCONNECTED ||
+			errno == ECONNRESET)
+		{
+			clients.remove(fd);
+			return "";
+		}
 	}
 
 	return m_buffer.getPacket();

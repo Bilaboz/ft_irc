@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:21:58 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/21 00:15:12 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/22 19:31:57 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include "Exec.hpp"
 #include "Log.hpp"
 #include "Message.hpp"
+#include "PacketBuffer.hpp"
 
 Server::Server(const char* port)
 {
@@ -110,11 +111,12 @@ int Server::poll()
 			{
 				Client& client = m_clients.get(pfds[i].fd).second;
 				std::string packet = client.receive(pfds[i].fd, m_clients);
-				if (!packet.empty())
+				while (!packet.empty())
 				{
 					const Message message(packet);
 					logReceivedMessage(message, pfds[i].fd);
 					Exec::exec(message, m_clients, pfds[i].fd, m_channels);
+					packet = client.receive(pfds[i].fd, m_clients, false);
 				}
 			}
 		}

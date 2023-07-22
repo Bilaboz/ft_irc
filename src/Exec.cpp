@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 18:20:50 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/22 20:26:52 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,12 @@ int Exec::exec(
 	std::vector<Channel>& channels
 )
 {
-	const func function = m_functions.at(message.verb());
-	return function(message, clients, fd, channels);
+	const std::map<std::string, func>::const_iterator func =
+		m_functions.find(message.verb());
+	if (func != m_functions.end())
+		return func->second(message, clients, fd, channels);
+	Log::warning() << "Unknown command: [" << message.verb() << "]\n";
+	return -1;
 }
 
 std::map<std::string, Exec::func> Exec::initTable()
@@ -83,10 +87,11 @@ int Exec::topic(
 	std::vector<Channel>& channels
 )
 {
-	const FdClient client = clients.get(fd);
+	const FdClient sender = clients.get(fd);
+	const std::string& senderNick = sender.second.getNickname();
 	if (message.parameters().empty())
 	{
-		// ERR_NEEDMOREPARAMS
+		sendToClient(sender, ERR_NEEDMOREPARAMS(senderNick, "TOPIC"));
 		return 0;
 	}
 
@@ -94,7 +99,9 @@ int Exec::topic(
 		findChannel(channels, message.parameters().front());
 	if (channelIt == channels.end())
 	{
-		// ERR_NOSUCHCHANNEL (403)
+		sendToClient(
+			sender, ERR_NOSUCHCHANNEL(senderNick, message.parameters()[0])
+		);
 		return 0;
 	}
 
@@ -107,7 +114,9 @@ int Exec::topic(
 
 	if (channelIt->isTopicProtected && !channelIt->isOperator(clients.get(fd)))
 	{
-		// ERR_CHANOPRIVSNEEDED (482)
+		sendToClient(
+			sender, ERR_CHANOPRIVSNEEDED(senderNick, channelIt->getName())
+		);
 		return 0;
 	}
 
@@ -124,20 +133,23 @@ int Exec::user(
 {
 	(void)channels;
 	const std::vector<std::string>& parameters = message.parameters();
+	FdClient& sender = clients.get(fd);
+	const std::string& senderNick = sender.second.getNickname();
 	if (parameters.size() < 4 || parameters[3].empty())
 	{
-		// TODO: ERR_NEEDMOREPARAMS (461) --> fd
-		return 0;
+		sendToClient(sender, ERR_NEEDMOREPARAMS(senderNick, "USER"));
+		return 1;
 	}
 
-	FdClient& client = clients.get(fd);
-	if (!client.second.getUsername().empty())
+	if (!sender.second.getUsername().empty())
 	{
-		// TODO: ERR_ALREADYREGISTERED "462" --> fd
-		return 0;
+		sendToClient(sender, ERR_ALREADYREGISTERED(senderNick));
+		return 1;
 	}
-	client.second.setUsername(parameters[0].c_str());
-	client.second.setRealname(parameters[3].c_str());
+
+	sender.second.setUsername(parameters[0].c_str());
+	sender.second.setRealname(parameters[3].c_str());
+	sendToClient(sender, RPL_WELCOME(senderNick, sender.second.getSource()));
 
 	return 0;
 }
@@ -163,7 +175,7 @@ int Exec::nick(
 	(void)channels;
 	FdClient& client = clients.get(fd);
 	std::vector<std::string> params = message.parameters();
-	if (params.size() < 2)
+	if (params.empty())
 	{
 		sendToClient(
 			client, ERR_NEEDMOREPARAMS(client.second.getNickname(), "nick")
@@ -442,48 +454,71 @@ int Exec::invite(
 	std::vector<Channel>& channels
 )
 {
+	const FdClient& sender = clients.get(fd);
+	const std::string& senderNick = sender.second.getNickname();
+
 	const std::vector<std::string>& parameters = message.parameters();
 	if (parameters.size() < 2)
 	{
-		// TODO: ERR_NEEDMOREPARAMS (461) --> fd
-		return 0;
+		sendToClient(sender, ERR_NEEDMOREPARAMS(senderNick, "INVITE"));
+		return 1;
 	}
 
-	const FdClient& sender = clients.get(fd);
+	// Check if the channel exist
 	const ChannelsIt channel = findChannel(channels, parameters[1]);
 	if (channel == channels.end())
 	{
-		// TODO: ERR_NOSUCHCHANNEL (403) --> fd
-		return 0;
+		sendToClient(sender, ERR_NOSUCHCHANNEL(senderNick, parameters[1]));
+		return 1;
 	}
+
 	if (!channel->isUser(sender))
 	{
-		// TODO: ERR_NOTONCHANNEL (442) --> fd
-		return 0;
+		sendToClient(sender, ERR_NOTONCHANNEL(senderNick, channel->getName()));
+		return 1;
 	}
+
 	if (channel->inviteOnly && (!channel->isOperator(sender)))
 	{
-		// TODO: ERR_CHANOPRIVSNEEDED (482) --> fd
-		return 0;
+		sendToClient(
+			sender, ERR_CHANOPRIVSNEEDED(senderNick, channel->getName())
+		);
+		return 1;
 	}
 
 	try
 	{
-		const FdClient& target = clients.get(parameters[0].c_str());
+		FdClient& target = clients.get(parameters[0].c_str());
 		if (channel->isUser(target))
 		{
-			// TODO: ERR_USERONCHANNEL (443) --> fd
-			return 0;
+			sendToClient(
+				sender,
+				ERR_USERONCHANNEL(
+					senderNick, target.second.getNickname(), channel->getName()
+				)
+			);
+			return 1;
 		}
-		// TODO: RPL_INVITING (341) --> fd
-		// TODO: <sender source> INVITE target channel
-		return 0;
+
+		sendToClient(
+			sender,
+			RPL_INVITING(
+				senderNick, target.second.getNickname(), channel->getName()
+			)
+		);
+		sendToClient(
+			target, sender.second.getSource() + " INVITE " +
+						target.second.getNickname() + " " + channel->getName()
+		);
+		channel->invite(target);
 	}
 	catch (std::invalid_argument& e)
 	{
-		// TODO: ERR_NOSUCHNICK (401) --> fd
-		return 0;
+		sendToClient(sender, ERR_NOSUCHNICK(senderNick, parameters[0]));
+		return 1;
 	}
+
+	return 0;
 }
 
 int Exec::privmsg(

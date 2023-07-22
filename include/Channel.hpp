@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:07 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/21 23:01:35 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/22 18:33:22 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ class Channel
 	Channel& operator=(const Channel& rhs);
 
 	int kick(FdClient& user);
+	void invite(FdClient& user);
 	int add(FdClient& user, const char* password);
 	int promote(FdClient& user);
 	int retrograde(FdClient& user);
