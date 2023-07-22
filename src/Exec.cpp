@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 22:38:45 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/22 22:48:23 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -600,7 +600,7 @@ int Exec::quit(
 	std::vector<Channel>& channels
 )
 {
-	FdClient& sender = clients.get(fd);
+	const FdClient& sender = clients.get(fd);
 	std::string reason;
 	if (!message.parameters().empty())
 		reason = message.parameters().front();

@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:21:58 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 22:40:38 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/22 22:48:59 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,8 @@ int Server::poll()
 				{
 					const Message message(packet);
 					logReceivedMessage(message, pfds[i].fd);
-					int code = Exec::exec(message, m_clients, pfds[i].fd, m_channels);
+					const int code =
+						Exec::exec(message, m_clients, pfds[i].fd, m_channels);
 					if (code == -2)
 						break;
 					packet = client.receive(

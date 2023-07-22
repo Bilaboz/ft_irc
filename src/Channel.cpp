@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:18 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 21:17:32 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/22 22:47:52 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int Channel::kick(FdClient& user, std::vector<Channel>& channels)
 
 	if (m_users.empty())
 	{
-		std::vector<Channel>::iterator itchan(this);
+		const std::vector<Channel>::iterator itchan(this);
 		channels.erase(itchan);
 	}
 	return erased ? SUCCESS : USER_NOEXIST;
