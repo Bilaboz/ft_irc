@@ -6,7 +6,7 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 17:54:41 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/21 23:54:33 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/22 18:28:26 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,11 @@
 #define RPL_TOPICWHOTIME(client, channel, nick, setat)                         \
 	("333 " + (client) + " " + (channel) + " " + (nick) + " " + (setat))
 #define RPL_INVITING(client, nick, channel)                                    \
-	("341 " + (client) + " " + (nick) + " " channel)
-
+	("341 " + (client) + " " + (nick) + " " + (channel))
 #define RPL_NAMREPLY(client, channel, users)                                   \
 	("353 " + (client) + " = " + (channel) + " " + (users))
 #define RPL_ENDOFNAMES(client, channel)                                        \
 	("366 " + (client) + " " + (channel) + " :End of /NAMES list")
-
 #define ERR_NOSUCHNICK(client, nick)                                           \
 	("401 " + (client) + " " + (nick) + " :No such nick")
 #define ERR_NOSUCHCHANNEL(client, channel)                                     \
@@ -47,8 +45,7 @@
 #define ERR_NOTONCHANNEL(client, channel)                                      \
 	("442 " + (client) + " " + (channel) + " :You're not on that channel")
 #define ERR_USERONCHANNEL(client, nick, channel)                               \
-	("443 " + (client) + " " + (nick) + " " + (channel) +                      \
-	 " :is already on channel")
+	("443 " + (client) + " " + (nick) + " " + (channel) + " :is already on channel")
 #define ERR_NEEDMOREPARAMS(client, command)                                    \
 	("461 " + (client) + " " command " :Not enough parameters")
 #define ERR_ALREADYREGISTERED(client)                                          \

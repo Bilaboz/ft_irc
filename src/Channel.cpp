@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:18 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 00:22:07 by lbesnard         ###   ########.fr       */
+/*   Updated: 2023/07/22 18:33:04 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,11 @@ Channel& Channel::operator=(const Channel& rhs)
 }
 
 Channel::~Channel() {}
+
+void Channel::invite(FdClient& user)
+{
+	m_invited.push_back(&user);
+}
 
 int Channel::kick(FdClient& user)
 {
