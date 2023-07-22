@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:07 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 18:33:22 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/22 21:06:44 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ class Channel
 
 	Channel& operator=(const Channel& rhs);
 
-	int kick(FdClient& user);
+	int kick(FdClient& user, std::vector<Channel>& channels);
 	void invite(FdClient& user);
 	int add(FdClient& user, const char* password);
 	int promote(FdClient& user);

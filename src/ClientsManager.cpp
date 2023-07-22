@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 18:53:47 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/22 21:08:30 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <utility>
 #include <vector>
 
+#include "Channel.hpp"
 #include "Client.hpp"
 #include "Log.hpp"
 
@@ -58,7 +59,7 @@ void ClientsManager::add(int fd)
 	m_clients.insert(std::make_pair(fd, Client()));
 }
 
-void ClientsManager::remove(int fd)
+void ClientsManager::remove(int fd, std::vector<Channel>& channels)
 {
 	const std::map<int, Client>::iterator clientIt = m_clients.find(fd);
 
@@ -72,18 +73,26 @@ void ClientsManager::remove(int fd)
 	Log::info() << "Client on fd " << fd << " ("
 				<< clientIt->second.getNickname() << ") disconnected\n";
 
+	for (std::vector<Channel>::iterator it = channels.begin();
+		 it != channels.end(); ++it)
+		it->kick(*clientIt, channels);
 	close(clientIt->first);
 	this->removePollFd(clientIt->first);
 	m_clients.erase(clientIt);
 }
 
-void ClientsManager::remove(const char* nickname)
+void ClientsManager::remove(
+	const char* nickname, std::vector<Channel>& channels
+)
 {
 	for (std::map<int, Client>::iterator clientIt = m_clients.begin();
 		 clientIt != m_clients.end(); ++clientIt)
 	{
 		if (clientIt->second.getNickname() == nickname)
 		{
+			for (std::vector<Channel>::iterator it = channels.begin();
+				 it != channels.end(); ++it)
+				it->kick(*clientIt, channels);
 			close(clientIt->first);
 			this->removePollFd(clientIt->first);
 			m_clients.erase(clientIt);

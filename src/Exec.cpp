@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 20:26:52 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/22 21:09:41 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -284,7 +284,7 @@ int Exec::kick(
 				);
 				continue;
 			}
-			tmpChan->kick(clients.get((*nickIt).c_str()));
+			tmpChan->kick(clients.get((*nickIt).c_str()), channels);
 			if (params[2].empty())
 				tmpChan->send(
 					client, "KICK " + tmpChan->getName() + " " + *nickIt
@@ -433,7 +433,7 @@ int Exec::part(
 			);
 			continue;
 		}
-		if (tmpChan->kick(client))
+		if (tmpChan->kick(client, channels))
 			tmpChan->send(
 				client, "PART" + tmpChan->getName() + params[1], true, true
 			);
