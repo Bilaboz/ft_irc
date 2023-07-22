@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 14:30:38 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/21 16:54:48 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/21 23:11:56 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ class Exec
 
 	static std::map<std::string, func> initTable();
 	static bool isNicknameValid(const std::string& str);
+	static std::string usersName(Channel& chan);
 	static std::vector<std::string> splitChar(
 		const std::string& str, char del = ','
 	);

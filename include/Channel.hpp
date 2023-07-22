@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:07 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/21 00:12:11 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/21 23:01:35 by lbesnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class Channel
 	bool setPassword(const char* password);
 	void setUserLimit(int limit);
 	std::string getName() const;
+	std::vector<FdClient*> getUsers() const;
 	std::string getTopic() const;
 	void setTopic(const std::string& topic);
 
