@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 21:08:30 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/22 23:58:39 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,8 @@ void ClientsManager::remove(int fd, std::vector<Channel>& channels)
 	Log::info() << "Client on fd " << fd << " ("
 				<< clientIt->second.getNickname() << ") disconnected\n";
 
-	for (std::vector<Channel>::iterator it = channels.begin();
-		 it != channels.end(); ++it)
-		it->kick(*clientIt, channels);
+	for (size_t i = 0; i < channels.size(); ++i)
+		channels[i].kick(*clientIt, channels);
 	close(clientIt->first);
 	this->removePollFd(clientIt->first);
 	m_clients.erase(clientIt);

@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:18 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 22:47:52 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/23 01:32:58 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,14 @@
 
 #include "Client.hpp"
 #include "Exec.hpp"
+#include "Log.hpp"
 
 Channel::Channel() {}
 
-Channel::Channel(const char* name) : m_name(name) {}
+Channel::Channel(const char* name)
+	: inviteOnly(), isTopicProtected(), m_name(name), m_userLimit()
+{
+}
 
 Channel::Channel(const Channel& other)
 	: inviteOnly(other.inviteOnly), isTopicProtected(other.isTopicProtected),
@@ -94,7 +98,7 @@ int Channel::add(FdClient& user, const char* password)
 	{
 		if (m_password != password)
 			return WRONG_PASSWORD;
-		if (m_users.size() == (size_t)m_userLimit)
+		if (m_userLimit && m_users.size() == (size_t)m_userLimit)
 			return CHANNELISFULL;
 		if (inviteOnly && !isInvited(user))
 			return INVITEONLYCHAN;
@@ -192,10 +196,16 @@ void Channel::send(
 	if (includeSource)
 		source = author.second.getSource();
 
+	source += " ";
 	for (std::vector<FdClient*>::iterator it = m_users.begin();
 		 it != m_users.end(); ++it)
 	{
 		if (&author != *it || sendToAuthor)
 			Exec::sendToClient(**it, source + message);
 	}
+}
+
+void Channel::setPassword(const char* password)
+{
+	m_password = password;
 }
