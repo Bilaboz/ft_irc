@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:18 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 18:33:04 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/22 22:47:52 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void Channel::invite(FdClient& user)
 	m_invited.push_back(&user);
 }
 
-int Channel::kick(FdClient& user)
+int Channel::kick(FdClient& user, std::vector<Channel>& channels)
 {
 	bool erased = false;
 	std::vector<FdClient*>::iterator it =
@@ -77,6 +77,11 @@ int Channel::kick(FdClient& user)
 		erased = true;
 	}
 
+	if (m_users.empty())
+	{
+		const std::vector<Channel>::iterator itchan(this);
+		channels.erase(itchan);
+	}
 	return erased ? SUCCESS : USER_NOEXIST;
 }
 
@@ -133,8 +138,6 @@ int Channel::retrograde(FdClient& user)
 
 	return USER_ALREADY;
 }
-
-// void Channel::msg(char* msg, const FdClient& sender) {}
 
 bool Channel::isOperator(const FdClient& user) const
 {

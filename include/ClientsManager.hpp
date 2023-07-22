@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:51:44 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 18:44:59 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/22 20:56:49 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <map>
 #include <vector>
 
+#include "Channel.hpp"
 #include "Client.hpp"
 
 class ClientsManager
@@ -31,8 +32,8 @@ class ClientsManager
 
 	void addListener(int listener);
 	void add(int fd);
-	void remove(int fd);
-	void remove(const char* nickname);
+	void remove(int fd, std::vector<Channel>& channels);
+	void remove(const char* nickname, std::vector<Channel>& channels);
 	FdClient& get(int fd);
 	const FdClient& get(int fd) const;
 	FdClient& get(const char* nickname);

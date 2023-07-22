@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 20:26:52 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/22 22:48:23 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,15 @@ std::map<std::string, Exec::func> Exec::initTable()
 {
 	std::map<std::string, func> ret;
 
+	ret.insert(std::make_pair("PING", &Exec::ping));
+	ret.insert(std::make_pair("QUIT", &Exec::quit));
 	ret.insert(std::make_pair("JOIN", &Exec::join));
 	ret.insert(std::make_pair("NICK", &Exec::nick));
 	ret.insert(std::make_pair("KICK", &Exec::kick));
 	ret.insert(std::make_pair("USER", &Exec::user));
 	ret.insert(std::make_pair("TOPIC", &Exec::topic));
 	ret.insert(std::make_pair("INVITE", &Exec::invite));
+	ret.insert(std::make_pair("PRIVMSG", &Exec::privmsg));
 
 	return ret;
 }
@@ -80,6 +83,7 @@ void Exec::sendToClient(const FdClient& client, const std::string& message)
 
 		bytesSent += sent;
 	}
+	Log::debug() << "Sent (fd=" << client.first << "): " << message << '\n';
 }
 
 int Exec::topic(
@@ -200,9 +204,10 @@ int Exec::nick(
 
 	if (clients.isNicknameUsed(nickname.c_str()))
 	{
-		sendToClient(
-			client, ERR_NICKNAMEINUSE(client.second.getNickname(), nickname)
-		);
+		std::string clientNick = client.second.getNickname();
+		if (clientNick.empty())
+			clientNick = "*";
+		sendToClient(client, ERR_NICKNAMEINUSE(clientNick, nickname));
 		return 1;
 	}
 	client.second.setNickname(nickname.c_str());
@@ -284,7 +289,7 @@ int Exec::kick(
 				);
 				continue;
 			}
-			tmpChan->kick(clients.get((*nickIt).c_str()));
+			tmpChan->kick(clients.get((*nickIt).c_str()), channels);
 			if (params[2].empty())
 				tmpChan->send(
 					client, "KICK " + tmpChan->getName() + " " + *nickIt
@@ -433,7 +438,7 @@ int Exec::part(
 			);
 			continue;
 		}
-		if (tmpChan->kick(client))
+		if (tmpChan->kick(client, channels))
 			tmpChan->send(
 				client, "PART" + tmpChan->getName() + params[1], true, true
 			);
@@ -575,4 +580,36 @@ int Exec::privmsg(
 	}
 
 	return 0;
+}
+
+int Exec::ping(
+	const Message& message, ClientsManager& clients, int fd,
+	std::vector<Channel>& channels
+)
+{
+	(void)channels;
+	std::string token;
+	if (!message.parameters().empty())
+		token = message.parameters().front();
+	sendToClient(clients.get(fd), "PONG " + token);
+	return 0;
+}
+
+int Exec::quit(
+	const Message& message, ClientsManager& clients, int fd,
+	std::vector<Channel>& channels
+)
+{
+	const FdClient& sender = clients.get(fd);
+	std::string reason;
+	if (!message.parameters().empty())
+		reason = message.parameters().front();
+	for (size_t i = 0; i < channels.size(); ++i)
+	{
+		if (channels[i].isUser(sender))
+			channels[i].send(sender, "QUIT :Quit: " + reason, true);
+	}
+	clients.remove(fd, channels);
+
+	return -2;
 }
