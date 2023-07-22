@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 14:30:38 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 22:25:12 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/23 00:23:22 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ class Exec
 	ping(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
 	static int
 	quit(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	static int
+	whois(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
 };
 
 #endif

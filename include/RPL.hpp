@@ -6,7 +6,7 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 17:54:41 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/22 20:26:34 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/23 01:08:54 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,13 @@
 
 #define RPL_WELCOME(client, source)                                            \
 	("001 " + (client) + " :Welcome to the ircserv Network, " + (source))
+#define RPL_WHOISUSER(client, nick, username, host, realname)                  \
+	("311 " + (client) + " " + (nick) + " " + (username) + " " + (host) +      \
+	 " * :" + (realname))
+#define RPL_WHOISERVER(client, nick, server, serverinfo)                       \
+	("312 " + (client) + " " + (nick) + " " + (server) + " :" + (serverinfo))
+#define RPL_ENDOFWHOIS(client, nick)                                           \
+	("318 " + (client) + " " + (nick) + " :End of /WHOIS list")
 #define RPL_NOTOPIC(client, channel)                                           \
 	("331 " + (client) + " " + (channel) + " :No topic is set")
 #define RPL_TOPIC(client, channel, topic)                                      \

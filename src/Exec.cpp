@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 22:48:23 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/23 01:17:31 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ std::map<std::string, Exec::func> Exec::initTable()
 	ret.insert(std::make_pair("KICK", &Exec::kick));
 	ret.insert(std::make_pair("USER", &Exec::user));
 	ret.insert(std::make_pair("TOPIC", &Exec::topic));
+	ret.insert(std::make_pair("WHOIS", &Exec::whois));
 	ret.insert(std::make_pair("INVITE", &Exec::invite));
 	ret.insert(std::make_pair("PRIVMSG", &Exec::privmsg));
 
@@ -153,7 +154,6 @@ int Exec::user(
 
 	sender.second.setUsername(parameters[0].c_str());
 	sender.second.setRealname(parameters[3].c_str());
-	sendToClient(sender, RPL_WELCOME(senderNick, sender.second.getSource()));
 
 	return 0;
 }
@@ -211,6 +211,7 @@ int Exec::nick(
 		return 1;
 	}
 	client.second.setNickname(nickname.c_str());
+	sendToClient(client, RPL_WELCOME(nickname, client.second.getSource()));
 	return 0;
 }
 
@@ -327,7 +328,7 @@ int Exec::join(
 	FdClient& client = clients.get(fd);
 
 	const std::vector<std::string>& params = message.parameters();
-	if (params.size() < 2)
+	if (params.empty())
 	{
 		sendToClient(
 			client, ERR_NEEDMOREPARAMS(client.second.getNickname(), "join")
@@ -335,18 +336,19 @@ int Exec::join(
 		return 1;
 	}
 	std::vector<std::string> toJoin = splitChar(params.front(), ',');
-	std::vector<std::string> passwords = splitChar(params[1], ',');
+	std::vector<std::string> passwords;
+	if (params.size() > 1)
+		passwords = splitChar(params[1], ',');
+	while (passwords.size() < toJoin.size())
+		passwords.push_back("");
 	for (size_t i = 0; i != toJoin.size(); i++)
 	{
-		const ChannelsIt tmpChan = findChannel(channels, toJoin[i]);
-		if (tmpChan != channels.end())
+		ChannelsIt tmpChan = findChannel(channels, toJoin[i]);
+		if (tmpChan == channels.end())
 		{
-			sendToClient(
-				client, ERR_NOSUCHCHANNEL(
-							client.second.getNickname(), tmpChan->getName()
-						)
-			);
-			continue;
+			channels.push_back(Channel(toJoin[i].c_str()));
+			tmpChan = channels.end() - 1;
+			tmpChan->setPassword(passwords[i].c_str());
 		}
 		switch (tmpChan->add(client, passwords[i].c_str()))
 		{
@@ -562,7 +564,10 @@ int Exec::privmsg(
 			// if chan check if he is in the chan -> send in chan
 			const ChannelsIt tmpChan = findChannel(channels, toSend[i]);
 			if (tmpChan->isUser(client))
-				tmpChan->send(client, parameters[1], true, true);
+				tmpChan->send(
+					client, "PRIVMSG " + toSend[i] + " :" + parameters[1], true,
+					false
+				);
 		}
 		// if not chan check if it's a nickname -> send to nickname
 		else
@@ -575,6 +580,7 @@ int Exec::privmsg(
 				);
 				continue;
 			}
+
 			// TODO sendToClient();
 		}
 	}
@@ -612,4 +618,53 @@ int Exec::quit(
 	clients.remove(fd, channels);
 
 	return -2;
+}
+
+int Exec::whois(
+	const Message& message, ClientsManager& clients, int fd,
+	std::vector<Channel>& channels
+)
+{
+	(void)channels;
+	const FdClient& sender = clients.get(fd);
+	const std::string senderNick = sender.second.getNickname();
+
+	if (message.parameters().empty())
+	{
+		sendToClient(
+			sender, ERR_NEEDMOREPARAMS(sender.second.getNickname(), "WHOIS")
+		);
+		return 1;
+	}
+	std::string targetNick = message.parameters().front();
+	if (targetNick.empty())
+	{
+		sendToClient(sender, ERR_NONICKNAMEGIVEN(senderNick));
+		return 1;
+	}
+
+	if (!clients.isNicknameUsed(targetNick.c_str()))
+	{
+		sendToClient(
+			sender, ERR_NOSUCHNICK(senderNick, message.parameters().front())
+		);
+		return 1;
+	}
+	const Client& target =
+		clients.get(message.parameters().front().c_str()).second;
+	sendToClient(
+		sender, RPL_WHOISUSER(
+					senderNick, targetNick, target.getUsername(), "*",
+					target.getRealname()
+				)
+	);
+	sendToClient(
+		sender, RPL_WHOISERVER(
+					senderNick, targetNick, std::string("ircserv"),
+					std::string("ircsrv by rcarles, lbesnard, nthimoni")
+				)
+	);
+	sendToClient(sender, RPL_ENDOFWHOIS(senderNick, targetNick));
+
+	return 0;
 }
