@@ -3,10 +3,11 @@ Language: Cpp
 UseTab: Always
 IndentWidth: 4
 TabWidth: 4
-ColumnLimit: 80
+ColumnLimit: 90
 BreakBeforeBraces: Allman
 SeparateDefinitionBlocks: Always
 AlignAfterOpenBracket: BlockIndent
+BinPackArguments: false
 DerivePointerAlignment: true
 PointerAlignment: Left
 EmptyLineBeforeAccessModifier: LogicalBlock
