@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 14:30:38 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/23 00:23:22 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/24 23:43:31 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,7 @@ class Exec
 		std::vector<Channel>& channels
 	);
 
-	static void sendToClient(
-		const FdClient& client, const std::string& message
-	);
+	static void sendToClient(const FdClient& client, const std::string& message);
 
   private:
 	static const std::map<std::string, func> m_functions;
@@ -43,9 +41,7 @@ class Exec
 	static std::map<std::string, func> initTable();
 	static bool isNicknameValid(const std::string& str);
 	static std::string usersName(Channel& chan);
-	static std::vector<std::string> splitChar(
-		const std::string& str, char del = ','
-	);
+	static std::vector<std::string> splitChar(const std::string& str, char del = ',');
 
 	static ChannelsIt findChannel(
 		std::vector<Channel>& channels, const std::string& name
@@ -73,6 +69,17 @@ class Exec
 	quit(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
 	static int
 	whois(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	static int
+	mode(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+
+	static int userMode(
+		const FdClient& client, const std::vector<std::string>& params,
+		ClientsManager& clients, std::vector<Channel>& channels
+	);
+	static int channelMode(
+		const FdClient& client, const std::vector<std::string>& params,
+		ClientsManager& clients, std::vector<Channel>& channels
+	);
 };
 
 #endif
