@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 23:58:39 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/24 23:43:24 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,7 @@ ClientsManager& ClientsManager::operator=(const ClientsManager& rhs)
 
 ClientsManager::~ClientsManager()
 {
-	for (std::vector<pollfd>::const_iterator it = m_fds.begin();
-		 it != m_fds.end(); it++)
+	for (std::vector<pollfd>::const_iterator it = m_fds.begin(); it != m_fds.end(); it++)
 		close(it->fd);
 }
 
@@ -70,8 +69,8 @@ void ClientsManager::remove(int fd, std::vector<Channel>& channels)
 		);
 	}
 
-	Log::info() << "Client on fd " << fd << " ("
-				<< clientIt->second.getNickname() << ") disconnected\n";
+	Log::info() << "Client on fd " << fd << " (" << clientIt->second.getNickname()
+				<< ") disconnected\n";
 
 	for (size_t i = 0; i < channels.size(); ++i)
 		channels[i].kick(*clientIt, channels);
@@ -80,17 +79,17 @@ void ClientsManager::remove(int fd, std::vector<Channel>& channels)
 	m_clients.erase(clientIt);
 }
 
-void ClientsManager::remove(
-	const char* nickname, std::vector<Channel>& channels
-)
+void ClientsManager::remove(const char* nickname, std::vector<Channel>& channels)
 {
 	for (std::map<int, Client>::iterator clientIt = m_clients.begin();
-		 clientIt != m_clients.end(); ++clientIt)
+		 clientIt != m_clients.end();
+		 ++clientIt)
 	{
 		if (clientIt->second.getNickname() == nickname)
 		{
 			for (std::vector<Channel>::iterator it = channels.begin();
-				 it != channels.end(); ++it)
+				 it != channels.end();
+				 ++it)
 				it->kick(*clientIt, channels);
 			close(clientIt->first);
 			this->removePollFd(clientIt->first);
@@ -102,8 +101,7 @@ void ClientsManager::remove(
 		}
 	}
 
-	std::string exception(
-		"ClientsManager::remove(const char* nickname): no client named "
+	std::string exception("ClientsManager::remove(const char* nickname): no client named "
 	);
 	exception += nickname;
 
@@ -136,16 +134,14 @@ const FdClient& ClientsManager::get(int fd) const
 
 FdClient& ClientsManager::get(const char* nickname)
 {
-	for (std::map<int, Client>::iterator it = m_clients.begin();
-		 it != m_clients.end(); ++it)
+	for (std::map<int, Client>::iterator it = m_clients.begin(); it != m_clients.end();
+		 ++it)
 	{
 		if (it->second.getNickname() == nickname)
 			return *it;
 	}
 
-	std::string exception(
-		"ClientsManager::get(const char* nickname): no client named "
-	);
+	std::string exception("ClientsManager::get(const char* nickname): no client named ");
 	exception += nickname;
 
 	throw std::invalid_argument(exception);
@@ -154,15 +150,14 @@ FdClient& ClientsManager::get(const char* nickname)
 const FdClient& ClientsManager::get(const char* nickname) const
 {
 	for (std::map<int, Client>::const_iterator it = m_clients.begin();
-		 it != m_clients.end(); ++it)
+		 it != m_clients.end();
+		 ++it)
 	{
 		if (it->second.getNickname() == nickname)
 			return *it;
 	}
 
-	std::string exception(
-		"ClientsManager::get(const char* nickname): no client named "
-	);
+	std::string exception("ClientsManager::get(const char* nickname): no client named ");
 	exception += nickname;
 
 	throw std::invalid_argument(exception);
@@ -176,7 +171,8 @@ std::vector<pollfd>& ClientsManager::getPollfds()
 bool ClientsManager::isNicknameUsed(const char* nick) const
 {
 	for (std::map<int, Client>::const_iterator it = m_clients.begin();
-		 it != m_clients.end(); it++)
+		 it != m_clients.end();
+		 it++)
 		if (it->second.getNickname() == nick)
 			return true;
 	return false;
@@ -193,8 +189,7 @@ void ClientsManager::addPollFd(int fd)
 
 void ClientsManager::removePollFd(int fd)
 {
-	for (std::vector<pollfd>::iterator it = m_fds.begin(); it != m_fds.end();
-		 ++it)
+	for (std::vector<pollfd>::iterator it = m_fds.begin(); it != m_fds.end(); ++it)
 	{
 		if (it->fd == fd)
 		{

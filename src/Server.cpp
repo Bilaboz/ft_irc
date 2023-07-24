@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:21:58 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 22:48:59 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/24 23:44:06 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,8 +98,7 @@ int Server::poll()
 				const int newFd = accept(pfds[i].fd, &addr, &addrlen);
 				if (newFd == -1)
 				{
-					Log::error()
-						<< "accept(): " << std::strerror(errno) << '\n';
+					Log::error() << "accept(): " << std::strerror(errno) << '\n';
 					return 2;
 				}
 
@@ -110,8 +109,7 @@ int Server::poll()
 			else
 			{
 				Client& client = m_clients.get(pfds[i].fd).second;
-				std::string packet =
-					client.receive(pfds[i].fd, m_clients, m_channels);
+				std::string packet = client.receive(pfds[i].fd, m_clients, m_channels);
 				while (!packet.empty())
 				{
 					const Message message(packet);
@@ -120,9 +118,7 @@ int Server::poll()
 						Exec::exec(message, m_clients, pfds[i].fd, m_channels);
 					if (code == -2)
 						break;
-					packet = client.receive(
-						pfds[i].fd, m_clients, m_channels, false
-					);
+					packet = client.receive(pfds[i].fd, m_clients, m_channels, false);
 				}
 			}
 		}

@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:07 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/24 19:16:25 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/24 23:43:08 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ class Channel
 	std::string getModes() const;
 
 	void send(
-		const FdClient& author, const std::string& message,
-		bool includeSource = false, bool sendToAuthor = false
+		const FdClient& author, const std::string& message, bool includeSource = false,
+		bool sendToAuthor = false
 	);
 
 	bool inviteOnly;	   // NOLINT
