@@ -6,7 +6,7 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 17:54:41 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/25 15:45:46 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/25 16:12:09 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,8 @@
 #define RPL_WHOREPLY(                                                                    \
 	client, channel, username, host, server, nick, flags, hopcount, realname             \
 )                                                                                        \
-	("352 " + (client) + " " + (channel) + " " + (username) + " " + (host) + " "      \
-	 server + " " + (nick) + " " + (flags) + " :" + (hopcount) + " " + (realname))
+	("352 " + (client) + " " + (channel) + " " + (username) + " " + (host) +             \
+	 " " server + " " + (nick) + " " + (flags) + " :" + (hopcount) + " " + (realname))
 #define RPL_NAMREPLY(client, channel, users)                                             \
 	("353 " + (client) + " = " + (channel) + " " + (users))
 

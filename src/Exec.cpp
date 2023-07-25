@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 16:01:24 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/25 16:17:18 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -523,8 +523,9 @@ int Exec::invite(
 			RPL_INVITING(senderNick, target.second.getNickname(), channel->getName())
 		);
 
-		std::string response = sender.second.getSource() + " INVITE " +
-							   target.second.getNickname() + " " + channel->getName();
+		const std::string response = sender.second.getSource() + " INVITE " +
+									 target.second.getNickname() + " " +
+									 channel->getName();
 		sendToClient(target, response);
 		channel->invite(target);
 	}
@@ -589,8 +590,11 @@ int Exec::privmsg(
 				);
 				continue;
 			}
-			FdClient& target = clients.get(toSend[i].c_str());
-			sendToClient(target, client.second.getSource() + " PRIVMSG " + toSend[i] + " :" + parameters[1]);
+			const FdClient& target = clients.get(toSend[i].c_str());
+			sendToClient(
+				target,
+				client.second.getSource() + " PRIVMSG " + toSend[i] + " :" + parameters[1]
+			);
 		}
 	}
 
@@ -708,7 +712,7 @@ int Exec::mode(
 		return 0;
 	}
 
-	ChannelsIt channel = findChannel(channels, params.front());
+	const ChannelsIt channel = findChannel(channels, params.front());
 	if (channel == channels.end())
 	{
 		sendToClient(
@@ -835,7 +839,7 @@ int Exec::mode(
 	if (appliedModes.size() == 1)
 		return 0;
 
-	std::string answer =
+	const std::string answer =
 		" MODE " + params.front() + " " + appliedModes + appliedModesParameters.str();
 
 	channel->send(client, answer, true, true);
@@ -861,25 +865,39 @@ int Exec::who(
 	// The target is a channel
 	if (target[0] == '#')
 	{
-		Exec::ChannelsIt chan = findChannel(channels, target);
+		const Exec::ChannelsIt chan = findChannel(channels, target);
 		if (chan != channels.end())
 		{
 			std::vector<FdClient*> users = chan->getUsers();
-			for (std::vector<FdClient*>::iterator it = users.begin(); it != users.end(); ++it)
+			for (std::vector<FdClient*>::iterator it = users.begin(); it != users.end();
+				 ++it)
 			{
-				FdClient& userPair = **it;
-				Client& user = (*it)->second;
+				const FdClient& userPair = **it;
+				const Client& user = (*it)->second;
 				std::string flags = "H";
 				if (chan->isOperator(userPair))
 					flags += "*";
-				sendToClient(sender, RPL_WHOREPLY(senderNick, target, user.getUsername(), "host", "ircserv", user.getNickname(), flags, "0", user.getRealname()));
+				sendToClient(
+					sender,
+					RPL_WHOREPLY(
+						senderNick,
+						target,
+						user.getUsername(),
+						"host",
+						"ircserv",
+						user.getNickname(),
+						flags,
+						"0",
+						user.getRealname()
+					)
+				);
 			}
 		}
 	}
 	// The target is a user
 	else
 	{
-		Log::warning() << "[WHO] [USER] command not handled yet" << std::endl;
+		Log::warning() << "[WHO] [USER] command not handled yet" << std::endl; // NOLINT
 	}
 
 	sendToClient(sender, RPL_ENDOFWHO(senderNick, target));
