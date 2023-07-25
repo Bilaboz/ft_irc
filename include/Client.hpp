@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 15:22:15 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/22 20:55:25 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/25 19:28:40 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,9 @@ class Client
 		bool newPollin = true
 	);
 	void reply(const std::string& message, bool includeSource = true) const;
-
 	std::string getSource() const;
+
+	bool hasSentPassword; // NOLINT
 
   private:
 	std::string m_nickname;

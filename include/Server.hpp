@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 17:38:44 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/20 17:20:05 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/25 19:21:03 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,14 @@
 class Server // NOLINT
 {
   public:
-	Server(const char* port);
+	Server(const char* port, const char* password);
 	~Server();
 
 	int poll();
 	void stop();
 
   private:
+	const char* m_password;
 	ClientsManager m_clients;
 	std::vector<Channel> m_channels;
 

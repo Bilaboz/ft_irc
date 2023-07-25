@@ -6,7 +6,7 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 17:54:41 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/25 16:57:59 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/25 19:07:05 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,8 @@
 	("461 " + (client) + " " command " :Not enough parameters")
 
 #define ERR_ALREADYREGISTERED(client) ("462 " + (client) + " :You may not reregister")
+
+#define ERR_PASSWDMISMATCH(client) ("464 " + (client) + " :Incorrect password")
 
 #define ERR_CHANNELISFULL(client, channel)                                               \
 	("471 " + (client) + " " + (channel) + " :Cannot join " + (channel) + " (+l)")
