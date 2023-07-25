@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/24 23:37:47 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/25 16:52:03 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,9 @@
 #include <cstring>
 #include <map>
 #include <stdexcept>
+#include <vector>
 
+#include "Channel.hpp"
 #include "Client.hpp"
 #include "Log.hpp"
 #include "RPL.hpp"
@@ -42,6 +44,7 @@ std::map<std::string, Exec::func> Exec::initTable()
 {
 	std::map<std::string, func> ret;
 
+	ret.insert(std::make_pair("WHO", &Exec::who));
 	ret.insert(std::make_pair("PING", &Exec::ping));
 	ret.insert(std::make_pair("QUIT", &Exec::quit));
 	ret.insert(std::make_pair("JOIN", &Exec::join));
@@ -365,7 +368,7 @@ int Exec::join(
 		{
 		case Channel::SUCCESS:
 			// send in the channel that someone has joined
-			tmpChan->send(client, "JOIN" + tmpChan->getName(), true, true);
+			tmpChan->send(client, "JOIN " + tmpChan->getName(), true, true);
 
 			if (!tmpChan->getTopic().empty())
 			{
@@ -520,8 +523,9 @@ int Exec::invite(
 			RPL_INVITING(senderNick, target.second.getNickname(), channel->getName())
 		);
 
-		std::string response = sender.second.getSource() + " INVITE " +
-							   target.second.getNickname() + " " + channel->getName();
+		const std::string response = sender.second.getSource() + " INVITE " +
+									 target.second.getNickname() + " " +
+									 channel->getName();
 		sendToClient(target, response);
 		channel->invite(target);
 	}
@@ -586,8 +590,11 @@ int Exec::privmsg(
 				);
 				continue;
 			}
-
-			// TODO sendToClient();
+			const FdClient& target = clients.get(toSend[i].c_str());
+			sendToClient(
+				target,
+				client.second.getSource() + " PRIVMSG " + toSend[i] + " :" + parameters[1]
+			);
 		}
 	}
 
@@ -705,7 +712,7 @@ int Exec::mode(
 		return 0;
 	}
 
-	ChannelsIt channel = findChannel(channels, params.front());
+	const ChannelsIt channel = findChannel(channels, params.front());
 	if (channel == channels.end())
 	{
 		sendToClient(
@@ -772,7 +779,7 @@ int Exec::mode(
 				break;
 			}
 
-			if (params.size() < paramsIdx)
+			if (params.size() <= paramsIdx)
 			{
 				Log::warning() << "Not enough parameters for mode " << modeStr[i] << '\n';
 				break;
@@ -785,7 +792,7 @@ int Exec::mode(
 			break;
 
 		case 'o':
-			if (params.size() < paramsIdx)
+			if (params.size() <= paramsIdx)
 			{
 				Log::warning() << "Not enough parameters for mode " << modeStr[i] << '\n';
 				break;
@@ -804,7 +811,7 @@ int Exec::mode(
 			if (isMinus)
 				channel->setUserLimit(0);
 
-			if (params.size() < paramsIdx)
+			if (params.size() <= paramsIdx)
 			{
 				Log::warning() << "Not enough parameters for mode " << modeStr[i] << '\n';
 				break;
@@ -832,10 +839,68 @@ int Exec::mode(
 	if (appliedModes.size() == 1)
 		return 0;
 
-	std::string answer =
+	const std::string answer =
 		" MODE " + params.front() + " " + appliedModes + appliedModesParameters.str();
 
 	channel->send(client, answer, true, true);
+
+	return 0;
+}
+
+int Exec::who(
+	const Message& message, ClientsManager& clients, int fd,
+	std::vector<Channel>& channels
+)
+{
+	const FdClient& sender = clients.get(fd);
+	const std::string& senderNick = sender.second.getNickname();
+
+	if (message.parameters().empty() || message.parameters().front().empty())
+	{
+		sendToClient(sender, ERR_NEEDMOREPARAMS(senderNick, "WHO"));
+		return 1;
+	}
+
+	const std::string& target = message.parameters().front();
+	// The target is a channel
+	if (target[0] == '#')
+	{
+		const Exec::ChannelsIt chan = findChannel(channels, target);
+		if (chan != channels.end())
+		{
+			std::vector<FdClient*> users = chan->getUsers();
+			for (std::vector<FdClient*>::iterator it = users.begin(); it != users.end();
+				 ++it)
+			{
+				const FdClient& userPair = **it;
+				const Client& user = (*it)->second;
+				std::string flags = "H";
+				if (chan->isOperator(userPair))
+					flags += "*";
+				sendToClient(
+					sender,
+					RPL_WHOREPLY(
+						senderNick,
+						target,
+						user.getUsername(),
+						"host",
+						"ircserv",
+						user.getNickname(),
+						flags,
+						"0",
+						user.getRealname()
+					)
+				);
+			}
+		}
+	}
+	// The target is a user
+	else
+	{
+		Log::warning() << "[WHO] [USER] command not handled yet" << std::endl; // NOLINT
+	}
+
+	sendToClient(sender, RPL_ENDOFWHO(senderNick, target));
 
 	return 0;
 }
