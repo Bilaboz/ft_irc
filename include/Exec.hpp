@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 14:30:38 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/24 23:43:31 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/25 14:35:07 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ class Exec
 	whois(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
 	static int
 	mode(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	static int
+	who(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
 
 	static int userMode(
 		const FdClient& client, const std::vector<std::string>& params,
