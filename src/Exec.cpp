@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 18:50:03 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/25 18:15:22 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -310,17 +310,19 @@ int Exec::kick(
 std::string Exec::usersName(Channel& chan)
 {
 	std::vector<FdClient*> vec = chan.getUsers();
-	std::string ret = ":" + vec[0]->second.getNickname();
+	std::string ret = ":";
+	if (chan.isOperator(*vec[0]))
+		ret += "@";
+	ret += vec[0]->second.getNickname();
 
-	for (size_t i = 1; i != vec.size(); i++)
+	for (size_t i = 1; i < vec.size(); i++)
 	{
-		std::string tmp = " ";
+		ret += " ";
 
 		if (chan.isOperator(*vec[i]))
-			tmp += "@";
+			ret += "@";
 
-		tmp.append(vec[i]->second.getNickname());
-		ret.append(tmp);
+		ret += vec[i]->second.getNickname();
 	}
 
 	return ret;
@@ -383,8 +385,10 @@ int Exec::join(
 				// TODO send RPL_TOPICWHOTIME
 			}
 
-			// TODO: send the list of current users in channel, not only the one who just
-			// joined
+			// give op privilege to the first user on the channel
+			if (channelCreated)
+				tmpChan->promote(client);
+
 			sendToClient(
 				client,
 				RPL_NAMREPLY(
@@ -394,10 +398,6 @@ int Exec::join(
 			sendToClient(
 				client, RPL_ENDOFNAMES(client.second.getNickname(), tmpChan->getName())
 			);
-			break;
-
-		case Channel::USER_ALREADY:
-			// TODO no idea
 			break;
 
 		case Channel::WRONG_PASSWORD:
@@ -419,12 +419,7 @@ int Exec::join(
 			);
 			break;
 		}
-
-		// give op privilege to the first user on the channel
-		if (channelCreated)
-			tmpChan->promote(client);
 	}
-
 	return 0;
 }
 
@@ -875,7 +870,7 @@ int Exec::who(
 				const Client& user = (*it)->second;
 				std::string flags = "H";
 				if (chan->isOperator(userPair))
-					flags += "*";
+					flags += "@";
 				sendToClient(
 					sender,
 					RPL_WHOREPLY(
