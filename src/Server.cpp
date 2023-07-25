@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:21:58 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 16:29:57 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/25 18:46:14 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
+#include <cerrno>
 #include <sstream>
 #include <stdexcept>
 
 #include "Exec.hpp"
 #include "Log.hpp"
 #include "Message.hpp"
-#include "PacketBuffer.hpp"
 
 Server::Server(const char* port)
 {
@@ -84,7 +84,9 @@ int Server::poll()
 
 	if (::poll(pfds.data(), pfds.size(), POLL_TIMEOUT) == -1)
 	{
-		Log::error() << "poll(): " << std::strerror(errno) << '\n';
+		if (errno != EINTR)
+			Log::error() << "poll(): " << std::strerror(errno) << '\n';
+
 		return 1;
 	}
 
