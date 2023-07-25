@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 16:52:03 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/25 17:05:58 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -732,6 +732,11 @@ int Exec::mode(
 		return 0;
 	}
 
+	const std::string& modeStr = params[1];
+	if (modeStr.find_first_not_of("+-itkol") != std::string::npos ||
+		(modeStr[0] != '+' && modeStr[0] != '-') || modeStr.size() == 1)
+		return 1;
+
 	if (!channel->isOperator(client))
 	{
 		sendToClient(
@@ -739,12 +744,6 @@ int Exec::mode(
 		);
 		return 1;
 	}
-
-	const std::string& modeStr = params[1];
-
-	if (modeStr.find_first_not_of("+-itkol") != std::string::npos ||
-		(modeStr[0] != '+' && modeStr[0] != '-') || modeStr.size() == 1)
-		return 1;
 
 	bool isMinus = false;
 	unsigned int paramsIdx = 2;
