@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 18:06:10 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/25 18:15:22 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -422,7 +422,6 @@ int Exec::join(
 	}
 	return 0;
 }
-
 
 int Exec::part(
 	const Message& message, ClientsManager& clients, int fd,
