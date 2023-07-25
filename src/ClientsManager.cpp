@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 16:54:51 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/25 19:46:29 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ void ClientsManager::remove(int fd, std::vector<Channel>& channels)
 
 	for (size_t i = 0; i < channels.size(); ++i)
 		channels[i].kick(*clientIt, channels);
+
 	close(clientIt->first);
 	this->removePollFd(clientIt->first);
 	m_clients.erase(clientIt);

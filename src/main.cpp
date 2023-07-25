@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/20 17:15:36 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 18:51:33 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/25 19:51:48 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,10 @@ int main(int argc, char** argv)
 
 	try
 	{
-		Server server(argv[1]);
+		Server server(argv[1], argv[2]);
+
+		if (argv[2])
+			Log::info() << "Server password: " << argv[2] << '\n';
 
 		while (g_isRunning)
 		{

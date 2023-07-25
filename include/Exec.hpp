@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 14:30:38 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 18:50:06 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/25 19:37:00 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,14 @@ class Exec
 
 	static int exec(
 		const Message& message, ClientsManager& clients, int fd,
-		std::vector<Channel>& channels
+		std::vector<Channel>& channels, const char* password
 	);
 
 	static void sendToClient(const FdClient& client, const std::string& message);
 
   private:
 	static const std::map<std::string, func> m_functions;
+	static const char* m_serverPassword; // NOLINT
 
 	static std::map<std::string, func> initTable();
 	static bool isNicknameValid(const std::string& str);
@@ -48,40 +49,33 @@ class Exec
 	);
 
 	static int
-	join(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	join(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);
 	static int
-	nick(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	nick(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);
 	static int
-	kick(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	kick(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);
 	static int
-	topic(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	topic(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);
 	static int
-	user(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	user(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);
 	static int
-	part(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	part(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);
 	static int
-	privmsg(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	privmsg(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);
 	static int
-	invite(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	invite(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);
 	static int
-	ping(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	ping(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);
 	static int
-	quit(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	quit(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);
 	static int
-	whois(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	whois(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);
 	static int
-	mode(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
+	mode(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);
 	static int
-	who(const Message& message, ClientsManager& clients, int fd, std::vector<Channel>&);
-
-	static int userMode(
-		const FdClient& client, const std::vector<std::string>& params,
-		ClientsManager& clients, std::vector<Channel>& channels
-	);
-	static int channelMode(
-		const FdClient& client, const std::vector<std::string>& params,
-		ClientsManager& clients, std::vector<Channel>& channels
-	);
+	who(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);
+	static int
+	pass(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);
 };
 
 #endif

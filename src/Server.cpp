@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:21:58 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 18:46:14 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/25 19:20:54 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@
 #include "Log.hpp"
 #include "Message.hpp"
 
-Server::Server(const char* port)
+Server::Server(const char* port, const char* password)
+	: m_password(password)
 {
 	int sock_fd = 0;
 	int yes = 1;
@@ -118,10 +119,14 @@ int Server::poll()
 				{
 					const Message message(packet);
 					logReceivedMessage(message, pfds[i].fd);
-					const int code =
-						Exec::exec(message, m_clients, pfds[i].fd, m_channels);
+
+					const int code = Exec::exec(
+						message, m_clients, pfds[i].fd, m_channels, m_password
+					);
+
 					if (code == -2)
 						break;
+
 					packet = client.receive(pfds[i].fd, m_clients, m_channels, false);
 				}
 			}

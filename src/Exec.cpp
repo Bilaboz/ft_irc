@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 18:15:22 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/25 19:56:03 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,32 @@
 #include "RPL.hpp"
 
 const std::map<std::string, Exec::func> Exec::m_functions = Exec::initTable();
+const char* Exec::m_serverPassword = NULL; // NOLINT
 
 int Exec::exec(
 	const Message& message, ClientsManager& clients, int fd,
-	std::vector<Channel>& channels
+	std::vector<Channel>& channels, const char* password
 )
 {
+	const FdClient& client = clients.get(fd);
+
+	Exec::m_serverPassword = password;
+	if (password != NULL && message.verb() != "CAP" && message.verb() != "PASS" &&
+		!client.second.hasSentPassword)
+	{
+		sendToClient(client, "ERROR :Invalid password");
+		clients.remove(fd, channels);
+		return -2;
+	}
+
 	const std::map<std::string, func>::const_iterator func =
 		m_functions.find(message.verb());
+
 	if (func != m_functions.end())
 		return func->second(message, clients, fd, channels);
+
 	Log::warning() << "Unknown command: [" << message.verb() << "]\n";
+
 	return -1;
 }
 
@@ -49,6 +64,7 @@ std::map<std::string, Exec::func> Exec::initTable()
 	ret.insert(std::make_pair("QUIT", &Exec::quit));
 	ret.insert(std::make_pair("JOIN", &Exec::join));
 	ret.insert(std::make_pair("NICK", &Exec::nick));
+	ret.insert(std::make_pair("PASS", &Exec::pass));
 	ret.insert(std::make_pair("KICK", &Exec::kick));
 	ret.insert(std::make_pair("MODE", &Exec::mode));
 	ret.insert(std::make_pair("USER", &Exec::user));
@@ -896,5 +912,39 @@ int Exec::who(
 
 	sendToClient(sender, RPL_ENDOFWHO(senderNick, target));
 
+	return 0;
+}
+
+int Exec::pass(
+	const Message& message, ClientsManager& clients, int fd,
+	std::vector<Channel>& channels
+)
+{
+	(void)channels;
+	FdClient& client = clients.get(fd);
+
+	if (Exec::m_serverPassword == NULL)
+		return 0;
+
+	if (message.parameters().empty())
+	{
+		sendToClient(client, ERR_NEEDMOREPARAMS(client.second.getNickname(), "PASS"));
+		return 1;
+	}
+
+	if (Exec::m_serverPassword != message.parameters().front())
+	{
+		sendToClient(client, ERR_PASSWDMISMATCH(client.second.getNickname()));
+		sendToClient(client, client.second.getSource() + " ERROR :Invalid password");
+		return 1;
+	}
+
+	if (client.second.hasSentPassword)
+	{
+		sendToClient(client, ERR_ALREADYREGISTERED(client.second.getNickname()));
+		return 1;
+	}
+
+	client.second.hasSentPassword = true;
 	return 0;
 }
