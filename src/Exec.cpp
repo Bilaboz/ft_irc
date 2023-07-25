@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 19:56:03 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/25 20:06:05 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ std::map<std::string, Exec::func> Exec::initTable()
 	ret.insert(std::make_pair("TOPIC", &Exec::topic));
 	ret.insert(std::make_pair("WHOIS", &Exec::whois));
 	ret.insert(std::make_pair("INVITE", &Exec::invite));
+	ret.insert(std::make_pair("NOTICE", &Exec::privmsg));
 	ret.insert(std::make_pair("PRIVMSG", &Exec::privmsg));
 
 	return ret;
