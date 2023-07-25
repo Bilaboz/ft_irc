@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 16:17:18 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/25 16:52:03 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -779,7 +779,7 @@ int Exec::mode(
 				break;
 			}
 
-			if (params.size() < paramsIdx)
+			if (params.size() <= paramsIdx)
 			{
 				Log::warning() << "Not enough parameters for mode " << modeStr[i] << '\n';
 				break;
@@ -792,7 +792,7 @@ int Exec::mode(
 			break;
 
 		case 'o':
-			if (params.size() < paramsIdx)
+			if (params.size() <= paramsIdx)
 			{
 				Log::warning() << "Not enough parameters for mode " << modeStr[i] << '\n';
 				break;
@@ -811,7 +811,7 @@ int Exec::mode(
 			if (isMinus)
 				channel->setUserLimit(0);
 
-			if (params.size() < paramsIdx)
+			if (params.size() <= paramsIdx)
 			{
 				Log::warning() << "Not enough parameters for mode " << modeStr[i] << '\n';
 				break;

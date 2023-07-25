@@ -6,13 +6,14 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:21:58 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/24 23:44:06 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/25 16:29:57 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
 #include <arpa/inet.h>
+#include <netdb.h>
 
 #include <sstream>
 #include <stdexcept>
@@ -34,10 +35,11 @@ Server::Server(const char* port)
 	hints.ai_flags = AI_PASSIVE;
 
 	addrinfo* result = NULL;
-	if (getaddrinfo(NULL, port, &hints, &result) != 0)
+	const int error = getaddrinfo(NULL, port, &hints, &result);
+	if (error)
 	{
 		freeaddrinfo(result);
-		throw std::runtime_error(std::strerror(errno));
+		throw std::runtime_error(gai_strerror(error));
 	}
 
 	addrinfo* tmp = NULL;
