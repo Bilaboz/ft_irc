@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 19:26:21 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/26 21:57:46 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ int Exec::topic(
 	std::vector<Channel>& channels
 )
 {
-	const FdClient sender = clients.get(fd);
+	const FdClient& sender = clients.get(fd);
 	const std::string& senderNick = sender.second.getNickname();
 	if (message.parameters().empty())
 	{
@@ -160,7 +160,9 @@ int Exec::topic(
 
 	channelIt->setTopic(message.parameters()[1], senderNick);
 
-	channelIt->send(sender, "TOPIC " + channelIt->getName() + " :" + channelIt->getTopic());
+	channelIt->send(
+		sender, "TOPIC " + channelIt->getName() + " :" + channelIt->getTopic(), true, true
+	);
 
 	return 0;
 }
@@ -955,9 +957,25 @@ int Exec::who(
 		}
 	}
 	// The target is a user
-	else
+	else if (clients.isNicknameUsed(target.c_str()))
 	{
-		Log::warning() << "[WHO] [USER] command not handled yet" << std::endl; // NOLINT
+		const FdClient& userPair = clients.get(target.c_str());
+		const Client& user = userPair.second;
+
+		sendToClient(
+			sender,
+			RPL_WHOREPLY(
+				senderNick,
+				"*",
+				user.getUsername(),
+				"host",
+				"ircserv",
+				user.getNickname(),
+				"H",
+				"0",
+				user.getRealname()
+			)
+		);
 	}
 
 	sendToClient(sender, RPL_ENDOFWHO(senderNick, target));
