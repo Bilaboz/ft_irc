@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 16:20:28 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/26 19:26:21 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ std::map<std::string, Exec::func> Exec::initTable()
 	ret.insert(std::make_pair("JOIN", &Exec::join));
 	ret.insert(std::make_pair("NICK", &Exec::nick));
 	ret.insert(std::make_pair("PASS", &Exec::pass));
+	ret.insert(std::make_pair("PART", &Exec::part));
 	ret.insert(std::make_pair("KICK", &Exec::kick));
 	ret.insert(std::make_pair("MODE", &Exec::mode));
 	ret.insert(std::make_pair("USER", &Exec::user));
@@ -120,32 +121,47 @@ int Exec::topic(
 	if (message.parameters().empty())
 	{
 		sendToClient(sender, ERR_NEEDMOREPARAMS(senderNick, "TOPIC"));
-		return 0;
+		return 1;
 	}
 
 	const ChannelsIt channelIt = findChannel(channels, message.parameters().front());
 	if (channelIt == channels.end())
 	{
 		sendToClient(sender, ERR_NOSUCHCHANNEL(senderNick, message.parameters()[0]));
-		return 0;
+		return 1;
 	}
 
+	const std::string& chanTopic = channelIt->getTopic();
 	if (message.parameters().size() == 1)
 	{
-		// RPL_TOPIC (332) or RPL_NOTOPIC (331)
-		// maybe then RPL_TOPICWHOTIME (333)
+		if (chanTopic.empty())
+			sendToClient(sender, RPL_NOTOPIC(senderNick, channelIt->getName()));
+		else
+		{
+			sendToClient(sender, RPL_TOPIC(senderNick, channelIt->getName(), chanTopic));
+			sendToClient(
+				sender,
+				RPL_TOPICWHOTIME(
+					senderNick,
+					channelIt->getName(),
+					channelIt->getTopicSetter(),
+					channelIt->getTopicTimestamp()
+				)
+			);
+		}
 		return 0;
 	}
 
-	if (channelIt->isTopicProtected && !channelIt->isOperator(clients.get(fd)))
+	if (channelIt->isTopicProtected && !channelIt->isOperator(sender))
 	{
 		sendToClient(sender, ERR_CHANOPRIVSNEEDED(senderNick, channelIt->getName()));
-		return 0;
+		return 1;
 	}
 
-	channelIt->setTopic(message.parameters()[1]);
-	// broadcast RPL_TOPIC (332) or RPL_NOTOPIC (331)
-	// then RPL_TOPICWHOTIME (333)
+	channelIt->setTopic(message.parameters()[1], senderNick);
+
+	channelIt->send(sender, "TOPIC " + channelIt->getName() + " :" + channelIt->getTopic());
+
 	return 0;
 }
 
@@ -404,6 +420,15 @@ int Exec::join(
 						tmpChan->getTopic()
 					)
 				);
+				sendToClient(
+					client,
+					RPL_TOPICWHOTIME(
+						client.second.getNickname(),
+						tmpChan->getName(),
+						tmpChan->getTopicSetter(),
+						tmpChan->getTopicTimestamp()
+					)
+				);
 				// TODO send RPL_TOPICWHOTIME
 			}
 
@@ -464,16 +489,24 @@ int Exec::part(
 	for (size_t i = 0; i != toLeave.size(); i++)
 	{
 		const ChannelsIt tmpChan = findChannel(channels, toLeave[i]);
-		if (tmpChan != channels.end())
+		if (tmpChan == channels.end())
 		{
 			sendToClient(
-				client, ERR_NOSUCHCHANNEL(client.second.getNickname(), tmpChan->getName())
+				client, ERR_NOSUCHCHANNEL(client.second.getNickname(), toLeave[i])
 			);
 			continue;
 		}
 
-		if (tmpChan->kick(client, channels))
-			tmpChan->send(client, "PART" + tmpChan->getName() + params[1], true, true);
+		if (tmpChan->isUser(client))
+		{
+			std::string answer = "PART " + tmpChan->getName();
+
+			if (params.size() > 1)
+				answer += " " + params[1];
+
+			tmpChan->send(client, answer, true, true);
+			tmpChan->kick(client, channels);
+		}
 		else
 		{
 			sendToClient(
@@ -520,37 +553,30 @@ int Exec::invite(
 		return 1;
 	}
 
-	// TODO: use isNicknameUsed instead of exceptions
-	try
-	{
-		FdClient& target = clients.get(parameters[0].c_str());
-		if (channel->isUser(target))
-		{
-			sendToClient(
-				sender,
-				ERR_USERONCHANNEL(
-					senderNick, target.second.getNickname(), channel->getName()
-				)
-			);
-			return 1;
-		}
-
-		sendToClient(
-			sender,
-			RPL_INVITING(senderNick, target.second.getNickname(), channel->getName())
-		);
-
-		const std::string response = sender.second.getSource() + " INVITE " +
-									 target.second.getNickname() + " " +
-									 channel->getName();
-		sendToClient(target, response);
-		channel->invite(target);
-	}
-	catch (std::invalid_argument& e)
+	if (!clients.isNicknameUsed(parameters[0].c_str()))
 	{
 		sendToClient(sender, ERR_NOSUCHNICK(senderNick, parameters[0]));
 		return 1;
 	}
+
+	FdClient& target = clients.get(parameters[0].c_str());
+	if (channel->isUser(target))
+	{
+		sendToClient(
+			sender,
+			ERR_USERONCHANNEL(senderNick, target.second.getNickname(), channel->getName())
+		);
+		return 1;
+	}
+
+	sendToClient(
+		sender, RPL_INVITING(senderNick, target.second.getNickname(), channel->getName())
+	);
+
+	const std::string response = sender.second.getSource() + " INVITE " +
+								 target.second.getNickname() + " " + channel->getName();
+	sendToClient(target, response);
+	channel->invite(target);
 
 	return 0;
 }
@@ -851,6 +877,7 @@ int Exec::mode(
 			}
 
 			size_t limit = std::strtoul(params[paramsIdx].c_str(), NULL, 10); // NOLINT
+			// TODO: CHECK FOR (LIMIT > 0)
 
 			int intLimit = 0;
 			if (limit > INT_MAX)

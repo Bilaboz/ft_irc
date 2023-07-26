@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/20 17:15:36 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 19:51:48 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/26 16:55:35 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ extern "C" void SIGINTHandler(int sig)
 	(void)sig;
 
 	g_isRunning = 0;
-	const char message[] = "Exiting...";
+	const char message[] = "\nExiting...\n";
 	// using write because we can't use any c++ stuff in a signal handler
 	write(STDOUT_FILENO, message, sizeof(message));
 }
