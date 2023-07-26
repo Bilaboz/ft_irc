@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 17:38:44 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 19:21:03 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/26 23:54:59 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ class Server // NOLINT
 
 	int poll();
 	void stop();
+
+	static std::string startDate; // NOLINT
 
   private:
 	const char* m_password;

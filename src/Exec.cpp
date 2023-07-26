@@ -14,6 +14,7 @@
 
 #include <sys/socket.h>
 
+#include "Server.hpp"
 #include <climits>
 #include <cstring>
 #include <map>
@@ -34,9 +35,10 @@ int Exec::exec(
 )
 {
 	const FdClient& client = clients.get(fd);
+	std::string verb = message.verb();
 
 	Exec::m_serverPassword = password;
-	if (password != NULL && message.verb() != "CAP" && message.verb() != "PASS" &&
+	if (password != NULL && verb != "CAP" && verb != "PASS" &&
 		!client.second.hasSentPassword)
 	{
 		sendToClient(client, "ERROR :Invalid password");
@@ -44,8 +46,15 @@ int Exec::exec(
 		return -2;
 	}
 
-	const std::map<std::string, func>::const_iterator func =
-		m_functions.find(message.verb());
+	if (!client.second.isRegistered && verb != "CAP" && verb != "NICK" &&
+		verb != "USER" && verb != "PASS")
+	{
+		sendToClient(client, "ERROR :You must register");
+		clients.remove(fd, channels);
+		return -2;
+	}
+
+	const std::map<std::string, func>::const_iterator func = m_functions.find(verb);
 
 	if (func != m_functions.end())
 		return func->second(message, clients, fd, channels);
@@ -183,7 +192,7 @@ int Exec::user(
 		return 1;
 	}
 
-	if (!sender.second.getUsername().empty())
+	if (sender.second.isRegistered)
 	{
 		sendToClient(sender, ERR_ALREADYREGISTERED(senderNick));
 		return 1;
@@ -191,6 +200,15 @@ int Exec::user(
 
 	sender.second.setUsername(parameters[0].c_str());
 	sender.second.setRealname(parameters[3].c_str());
+
+	if (!senderNick.empty() && !sender.second.isRegistered)
+	{
+		sender.second.isRegistered = true;
+		sendToClient(sender, RPL_WELCOME(senderNick, sender.second.getSource()));
+		sendToClient(sender, RPL_YOURHOST(senderNick));
+		sendToClient(sender, RPL_CREATED(senderNick, Server::startDate));
+		sendToClient(sender, RPL_MYINFO(senderNick));
+	}
 
 	return 0;
 }
@@ -244,7 +262,15 @@ int Exec::nick(
 	}
 
 	client.second.setNickname(nickname.c_str());
-	sendToClient(client, RPL_WELCOME(nickname, client.second.getSource()));
+
+	if (!client.second.getUsername().empty() && !client.second.isRegistered)
+	{
+		client.second.isRegistered = true;
+		sendToClient(client, RPL_WELCOME(nickname, client.second.getSource()));
+		sendToClient(client, RPL_YOURHOST(client.second.getNickname()));
+		sendToClient(client, RPL_CREATED(client.second.getNickname(), Server::startDate));
+		sendToClient(client, RPL_MYINFO(client.second.getNickname()));
+	}
 
 	return 0;
 }
@@ -902,7 +928,7 @@ int Exec::mode(
 		return 0;
 
 	const std::string answer =
-		" MODE " + params.front() + " " + appliedModes + appliedModesParameters.str();
+		"MODE " + params.front() + " " + appliedModes + appliedModesParameters.str();
 
 	channel->send(client, answer, true, true);
 
@@ -945,8 +971,8 @@ int Exec::who(
 						senderNick,
 						target,
 						user.getUsername(),
-						"host",
-						"ircserv",
+						user.getHost(),
+						"ft_irc",
 						user.getNickname(),
 						flags,
 						"0",
@@ -1007,7 +1033,7 @@ int Exec::pass(
 		return 1;
 	}
 
-	if (client.second.hasSentPassword)
+	if (client.second.hasSentPassword || client.second.isRegistered)
 	{
 		sendToClient(client, ERR_ALREADYREGISTERED(client.second.getNickname()));
 		return 1;

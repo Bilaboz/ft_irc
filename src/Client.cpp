@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 18:15:47 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 19:53:44 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/26 23:48:42 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,12 @@
 
 #include "ClientsManager.hpp"
 
-Client::Client()
-	: hasSentPassword(false)
-{}
+Client::Client() : hasSentPassword(false), isRegistered(false) {}
 
 Client::Client(const Client& other)
-	: hasSentPassword(other.hasSentPassword), m_nickname(other.m_nickname),
-	  m_username(other.m_username), m_buffer(other.m_buffer)
+	: hasSentPassword(other.hasSentPassword), isRegistered(other.isRegistered),
+	  m_nickname(other.m_nickname), m_username(other.m_username), m_host(other.m_host),
+	  m_buffer(other.m_buffer)
 {
 }
 
@@ -31,8 +30,10 @@ Client& Client::operator=(const Client& rhs)
 	if (this != &rhs)
 	{
 		hasSentPassword = rhs.hasSentPassword;
+		isRegistered = rhs.isRegistered;
 		m_nickname = rhs.m_nickname;
 		m_username = rhs.m_username;
+		m_host = rhs.m_host;
 		m_buffer = rhs.m_buffer;
 	}
 
@@ -56,6 +57,11 @@ const std::string& Client::getRealname() const
 	return m_realname;
 }
 
+const std::string& Client::getHost() const
+{
+	return m_host;
+}
+
 void Client::setUsername(const char* username)
 {
 	m_username = username;
@@ -69,6 +75,11 @@ void Client::setNickname(const char* nickname)
 void Client::setRealname(const char* realname)
 {
 	m_realname = realname;
+}
+
+void Client::setHost(const char* host)
+{
+	m_host = host;
 }
 
 std::string Client::receive(
@@ -97,8 +108,8 @@ std::string Client::getSource() const
 	if (!m_username.empty())
 		source << '!' << m_username;
 
-	// if (!m_host.empty())
-	//	source << '@' << m_host;
+	if (!m_host.empty())
+		source << '@' << m_host;
 
 	return source.str();
 }

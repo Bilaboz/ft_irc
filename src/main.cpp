@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/20 17:15:36 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 16:55:35 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/27 00:02:16 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ int main(int argc, char** argv)
 	}
 
 	std::signal(SIGINT, SIGINTHandler);
+
+	Log::setLevel(Log::INFO);
 
 	try
 	{

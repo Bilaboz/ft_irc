@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 15:22:15 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 19:28:40 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/26 23:48:56 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,11 @@ class Client
 	const std::string& getUsername() const;
 	const std::string& getNickname() const;
 	const std::string& getRealname() const;
+	const std::string& getHost() const;
 	void setUsername(const char* username);
 	void setNickname(const char* nickname);
 	void setRealname(const char* realname);
+	void setHost(const char* host);
 
 	std::string receive(
 		int fd, ClientsManager& clients, std::vector<Channel>& channels,
@@ -46,11 +48,13 @@ class Client
 	std::string getSource() const;
 
 	bool hasSentPassword; // NOLINT
+	bool isRegistered; // NOLINT
 
   private:
 	std::string m_nickname;
 	std::string m_username;
 	std::string m_realname;
+	std::string m_host;
 	PacketBuffer m_buffer;
 };
 
