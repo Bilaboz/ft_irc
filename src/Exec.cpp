@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 19:26:21 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/26 19:55:58 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ int Exec::topic(
 	std::vector<Channel>& channels
 )
 {
-	const FdClient sender = clients.get(fd);
+	const FdClient& sender = clients.get(fd);
 	const std::string& senderNick = sender.second.getNickname();
 	if (message.parameters().empty())
 	{
@@ -160,7 +160,7 @@ int Exec::topic(
 
 	channelIt->setTopic(message.parameters()[1], senderNick);
 
-	channelIt->send(sender, "TOPIC " + channelIt->getName() + " :" + channelIt->getTopic());
+	channelIt->send(sender, "TOPIC " + channelIt->getName() + " :" + channelIt->getTopic(), true, true);
 
 	return 0;
 }
