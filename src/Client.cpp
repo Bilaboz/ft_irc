@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 18:15:47 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 19:53:44 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/26 19:34:55 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,11 @@
 
 #include "ClientsManager.hpp"
 
-Client::Client()
-	: hasSentPassword(false)
-{}
+Client::Client() : hasSentPassword(false), isRegistered(false) {}
 
 Client::Client(const Client& other)
-	: hasSentPassword(other.hasSentPassword), m_nickname(other.m_nickname),
-	  m_username(other.m_username), m_buffer(other.m_buffer)
+	: hasSentPassword(other.hasSentPassword), isRegistered(other.isRegistered),
+	  m_nickname(other.m_nickname), m_username(other.m_username), m_buffer(other.m_buffer)
 {
 }
 
@@ -31,6 +29,7 @@ Client& Client::operator=(const Client& rhs)
 	if (this != &rhs)
 	{
 		hasSentPassword = rhs.hasSentPassword;
+		isRegistered = rhs.isRegistered;
 		m_nickname = rhs.m_nickname;
 		m_username = rhs.m_username;
 		m_buffer = rhs.m_buffer;

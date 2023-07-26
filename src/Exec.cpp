@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 19:26:21 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/26 19:52:28 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,10 @@ int Exec::exec(
 )
 {
 	const FdClient& client = clients.get(fd);
+	std::string verb = message.verb();
 
 	Exec::m_serverPassword = password;
-	if (password != NULL && message.verb() != "CAP" && message.verb() != "PASS" &&
+	if (password != NULL && verb != "CAP" && verb != "PASS" &&
 		!client.second.hasSentPassword)
 	{
 		sendToClient(client, "ERROR :Invalid password");
@@ -44,8 +45,15 @@ int Exec::exec(
 		return -2;
 	}
 
-	const std::map<std::string, func>::const_iterator func =
-		m_functions.find(message.verb());
+	if (!client.second.isRegistered && verb != "CAP" && verb != "NICK" &&
+		verb != "USER" && verb != "PASS")
+	{
+		sendToClient(client, "ERROR :You must register");
+		clients.remove(fd, channels);
+		return -2;
+	}
+
+	const std::map<std::string, func>::const_iterator func = m_functions.find(verb);
 
 	if (func != m_functions.end())
 		return func->second(message, clients, fd, channels);
@@ -160,7 +168,9 @@ int Exec::topic(
 
 	channelIt->setTopic(message.parameters()[1], senderNick);
 
-	channelIt->send(sender, "TOPIC " + channelIt->getName() + " :" + channelIt->getTopic());
+	channelIt->send(
+		sender, "TOPIC " + channelIt->getName() + " :" + channelIt->getTopic()
+	);
 
 	return 0;
 }
@@ -181,7 +191,7 @@ int Exec::user(
 		return 1;
 	}
 
-	if (!sender.second.getUsername().empty())
+	if (sender.second.isRegistered)
 	{
 		sendToClient(sender, ERR_ALREADYREGISTERED(senderNick));
 		return 1;
@@ -242,6 +252,7 @@ int Exec::nick(
 	}
 
 	client.second.setNickname(nickname.c_str());
+	client.second.isRegistered = true;
 	sendToClient(client, RPL_WELCOME(nickname, client.second.getSource()));
 
 	return 0;
@@ -989,7 +1000,7 @@ int Exec::pass(
 		return 1;
 	}
 
-	if (client.second.hasSentPassword)
+	if (client.second.hasSentPassword || client.second.isRegistered)
 	{
 		sendToClient(client, ERR_ALREADYREGISTERED(client.second.getNickname()));
 		return 1;
