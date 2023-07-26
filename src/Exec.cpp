@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 20:06:05 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/26 14:45:04 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,7 +266,7 @@ int Exec::kick(
 		 channelIt++)
 	{
 		tmpChan = findChannel(channels, *channelIt);
-		if (tmpChan != channels.end())
+		if (tmpChan == channels.end())
 		{
 			sendToClient(
 				client, ERR_NOSUCHCHANNEL(client.second.getNickname(), tmpChan->getName())
@@ -278,7 +278,7 @@ int Exec::kick(
 			 nickIt != passwords.end();
 			 nickIt++)
 		{
-			if (tmpChan->isUser(client))
+			if (!tmpChan->isUser(client))
 			{
 				sendToClient(
 					client,
@@ -287,7 +287,7 @@ int Exec::kick(
 				break;
 			}
 
-			if (tmpChan->isOperator(client))
+			if (!tmpChan->isOperator(client))
 			{
 				sendToClient(
 					client,
@@ -296,7 +296,8 @@ int Exec::kick(
 				break;
 			}
 
-			if (tmpChan->isUser(clients.get((*nickIt).c_str())))
+			if (!clients.isNicknameUsed(nickIt->c_str()) ||
+				!tmpChan->isUser(clients.get((*nickIt).c_str())))
 			{
 				sendToClient(
 					client,
@@ -307,17 +308,21 @@ int Exec::kick(
 				continue;
 			}
 
-			tmpChan->kick(clients.get((*nickIt).c_str()), channels);
-
 			if (params[2].empty())
-				tmpChan->send(client, "KICK " + tmpChan->getName() + " " + *nickIt);
+				tmpChan->send(
+					client, "KICK " + tmpChan->getName() + " " + *nickIt, true, true
+				);
 			else
 			{
 				tmpChan->send(
 					client,
-					"KICK " + tmpChan->getName() + " " + *nickIt + " :" + params[2]
+					"KICK " + tmpChan->getName() + " " + *nickIt + " :" + params[2],
+					true,
+					true
 				);
 			}
+
+			tmpChan->kick(clients.get((*nickIt).c_str()), channels);
 		}
 	}
 
@@ -560,7 +565,9 @@ int Exec::privmsg(
 
 	if (parameters.size() < 2)
 	{
-		sendToClient(client, ERR_NEEDMOREPARAMS(client.second.getNickname(), "privmsg"));
+		sendToClient(
+			client, ERR_NEEDMOREPARAMS(client.second.getNickname(), message.verb())
+		);
 		return 1;
 	}
 
@@ -589,7 +596,10 @@ int Exec::privmsg(
 			if (tmpChan->isUser(client))
 			{
 				tmpChan->send(
-					client, "PRIVMSG " + toSend[i] + " :" + parameters[1], true, false
+					client,
+					message.verb() + " " + toSend[i] + " :" + parameters[1],
+					true,
+					false
 				);
 			}
 		}
@@ -605,7 +615,8 @@ int Exec::privmsg(
 			const FdClient& target = clients.get(toSend[i].c_str());
 			sendToClient(
 				target,
-				client.second.getSource() + " PRIVMSG " + toSend[i] + " :" + parameters[1]
+				client.second.getSource() + " " + message.verb() + " " + toSend[i] +
+					" :" + parameters[1]
 			);
 		}
 	}
