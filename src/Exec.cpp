@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 16:17:12 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/26 16:20:28 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -828,7 +828,7 @@ int Exec::mode(
 				break;
 
 			{
-				const FdClient& target = clients.get(params[paramsIdx].c_str());
+				FdClient& target = clients.get(params[paramsIdx].c_str());
 				if (!channel->isUser(target))
 					break;
 
