@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 16:20:28 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/26 17:26:23 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ std::map<std::string, Exec::func> Exec::initTable()
 	ret.insert(std::make_pair("JOIN", &Exec::join));
 	ret.insert(std::make_pair("NICK", &Exec::nick));
 	ret.insert(std::make_pair("PASS", &Exec::pass));
+	ret.insert(std::make_pair("PART", &Exec::part));
 	ret.insert(std::make_pair("KICK", &Exec::kick));
 	ret.insert(std::make_pair("MODE", &Exec::mode));
 	ret.insert(std::make_pair("USER", &Exec::user));
@@ -464,16 +465,24 @@ int Exec::part(
 	for (size_t i = 0; i != toLeave.size(); i++)
 	{
 		const ChannelsIt tmpChan = findChannel(channels, toLeave[i]);
-		if (tmpChan != channels.end())
+		if (tmpChan == channels.end())
 		{
 			sendToClient(
-				client, ERR_NOSUCHCHANNEL(client.second.getNickname(), tmpChan->getName())
+				client, ERR_NOSUCHCHANNEL(client.second.getNickname(), toLeave[i])
 			);
 			continue;
 		}
 
-		if (tmpChan->kick(client, channels))
-			tmpChan->send(client, "PART" + tmpChan->getName() + params[1], true, true);
+		if (tmpChan->isUser(client))
+		{
+			std::string answer = "PART " + tmpChan->getName();
+
+			if (params.size() > 1)
+				answer += " " + params[1];
+
+			tmpChan->send(client, answer, true, true);
+			tmpChan->kick(client, channels);
+		}
 		else
 		{
 			sendToClient(
@@ -851,6 +860,7 @@ int Exec::mode(
 			}
 
 			size_t limit = std::strtoul(params[paramsIdx].c_str(), NULL, 10); // NOLINT
+			// TODO: CHECK FOR (LIMIT > 0)
 
 			int intLimit = 0;
 			if (limit > INT_MAX)
