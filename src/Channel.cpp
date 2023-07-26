@@ -6,13 +6,15 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:18 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/24 23:41:14 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/26 19:30:54 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
 
 #include <algorithm>
+#include <ctime>
+#include <sstream>
 #include <vector>
 
 #include "Client.hpp"
@@ -89,7 +91,8 @@ int Channel::kick(FdClient& user, std::vector<Channel>& channels)
 		channels.erase(itchan);
 	}
 
-	Log::info() << user.second.getNickname() << " left (or kicked) " << m_name << '\n';
+	if (erased)
+		Log::info() << user.second.getNickname() << " left (or kicked) " << m_name << '\n';
 
 	return erased ? SUCCESS : USER_NOEXIST;
 }
@@ -195,9 +198,23 @@ std::string Channel::getTopic() const
 	return m_topic;
 }
 
-void Channel::setTopic(const std::string& topic)
+void Channel::setTopic(const std::string& topic, const std::string& setterNick)
 {
+	std::stringstream stream;
+	stream << std::time(NULL);
+	m_topicTimestamp = stream.str();
 	m_topic = topic;
+	m_topicSetter = setterNick;
+}
+
+const std::string& Channel::getTopicTimestamp() const
+{
+	return m_topicTimestamp;
+}
+
+const std::string& Channel::getTopicSetter() const
+{
+	return m_topicSetter;
 }
 
 void Channel::send(

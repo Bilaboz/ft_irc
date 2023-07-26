@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:07 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/24 23:43:08 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/26 18:39:40 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,9 @@ class Channel
 	std::string getName() const;
 	std::vector<FdClient*> getUsers() const;
 	std::string getTopic() const;
-	void setTopic(const std::string& topic);
+	void setTopic(const std::string& topic, const std::string& setterNick);
+	const std::string& getTopicTimestamp() const;
+	const std::string& getTopicSetter() const;
 	std::string getModes() const;
 
 	void send(
@@ -64,6 +66,8 @@ class Channel
   private:
 	std::string m_name;
 	std::string m_topic;
+	std::string m_topicTimestamp;
+	std::string m_topicSetter;
 	std::vector<FdClient*> m_users;
 	std::vector<FdClient*> m_operators;
 	std::vector<FdClient*> m_invited;

@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 17:31:43 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/26 19:26:21 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,32 +121,47 @@ int Exec::topic(
 	if (message.parameters().empty())
 	{
 		sendToClient(sender, ERR_NEEDMOREPARAMS(senderNick, "TOPIC"));
-		return 0;
+		return 1;
 	}
 
 	const ChannelsIt channelIt = findChannel(channels, message.parameters().front());
 	if (channelIt == channels.end())
 	{
 		sendToClient(sender, ERR_NOSUCHCHANNEL(senderNick, message.parameters()[0]));
-		return 0;
+		return 1;
 	}
 
+	const std::string& chanTopic = channelIt->getTopic();
 	if (message.parameters().size() == 1)
 	{
-		// RPL_TOPIC (332) or RPL_NOTOPIC (331)
-		// maybe then RPL_TOPICWHOTIME (333)
+		if (chanTopic.empty())
+			sendToClient(sender, RPL_NOTOPIC(senderNick, channelIt->getName()));
+		else
+		{
+			sendToClient(sender, RPL_TOPIC(senderNick, channelIt->getName(), chanTopic));
+			sendToClient(
+				sender,
+				RPL_TOPICWHOTIME(
+					senderNick,
+					channelIt->getName(),
+					channelIt->getTopicSetter(),
+					channelIt->getTopicTimestamp()
+				)
+			);
+		}
 		return 0;
 	}
 
-	if (channelIt->isTopicProtected && !channelIt->isOperator(clients.get(fd)))
+	if (channelIt->isTopicProtected && !channelIt->isOperator(sender))
 	{
 		sendToClient(sender, ERR_CHANOPRIVSNEEDED(senderNick, channelIt->getName()));
-		return 0;
+		return 1;
 	}
 
-	channelIt->setTopic(message.parameters()[1]);
-	// broadcast RPL_TOPIC (332) or RPL_NOTOPIC (331)
-	// then RPL_TOPICWHOTIME (333)
+	channelIt->setTopic(message.parameters()[1], senderNick);
+
+	channelIt->send(sender, "TOPIC " + channelIt->getName() + " :" + channelIt->getTopic());
+
 	return 0;
 }
 
@@ -405,6 +420,15 @@ int Exec::join(
 						tmpChan->getTopic()
 					)
 				);
+				sendToClient(
+					client,
+					RPL_TOPICWHOTIME(
+						client.second.getNickname(),
+						tmpChan->getName(),
+						tmpChan->getTopicSetter(),
+						tmpChan->getTopicTimestamp()
+					)
+				);
 				// TODO send RPL_TOPICWHOTIME
 			}
 
@@ -529,7 +553,6 @@ int Exec::invite(
 		return 1;
 	}
 
-	// TODO: use isNicknameUsed instead of exceptions
 	if (!clients.isNicknameUsed(parameters[0].c_str()))
 	{
 		sendToClient(sender, ERR_NOSUCHNICK(senderNick, parameters[0]));
