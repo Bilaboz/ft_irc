@@ -6,7 +6,7 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 17:54:41 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/25 19:07:05 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/26 13:51:27 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@
 	("443 " + (client) + " " + (nick) + " " + (channel) + " :is already on channel")
 
 #define ERR_NEEDMOREPARAMS(client, command)                                              \
-	("461 " + (client) + " " command " :Not enough parameters")
+	("461 " + (client) + " " + command + " :Not enough parameters")
 
 #define ERR_ALREADYREGISTERED(client) ("462 " + (client) + " :You may not reregister")
 
