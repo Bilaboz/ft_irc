@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 15:25:24 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/26 15:29:01 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -826,12 +826,15 @@ int Exec::mode(
 
 			if (!clients.isNicknameUsed(params[paramsIdx].c_str()))
 				break;
+
 			{
 				FdClient& target = clients.get(params[paramsIdx].c_str());
 				if (!channel->isUser(target))
 					break;
+
 				isMinus ? channel->retrograde(target) : channel->promote(target);
 			}
+
 			appliedModes += 'o';
 			appliedModesParameters << ' ' << params[paramsIdx];
 			paramsIdx++;
