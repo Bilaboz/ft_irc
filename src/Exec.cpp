@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 19:52:28 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/26 23:56:57 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 #include <sys/socket.h>
 
+#include "Server.hpp"
 #include <climits>
 #include <cstring>
 #include <map>
@@ -200,6 +201,15 @@ int Exec::user(
 	sender.second.setUsername(parameters[0].c_str());
 	sender.second.setRealname(parameters[3].c_str());
 
+	if (!senderNick.empty() && !sender.second.isRegistered)
+	{
+		sender.second.isRegistered = true;
+		sendToClient(sender, RPL_WELCOME(senderNick, sender.second.getSource()));
+		sendToClient(sender, RPL_YOURHOST(senderNick));
+		sendToClient(sender, RPL_CREATED(senderNick, Server::startDate));
+		sendToClient(sender, RPL_MYINFO(senderNick));
+	}
+
 	return 0;
 }
 
@@ -252,8 +262,15 @@ int Exec::nick(
 	}
 
 	client.second.setNickname(nickname.c_str());
-	client.second.isRegistered = true;
-	sendToClient(client, RPL_WELCOME(nickname, client.second.getSource()));
+
+	if (!client.second.getUsername().empty() && !client.second.isRegistered)
+	{
+		client.second.isRegistered = true;
+		sendToClient(client, RPL_WELCOME(nickname, client.second.getSource()));
+		sendToClient(client, RPL_YOURHOST(client.second.getNickname()));
+		sendToClient(client, RPL_CREATED(client.second.getNickname(), Server::startDate));
+		sendToClient(client, RPL_MYINFO(client.second.getNickname()));
+	}
 
 	return 0;
 }
@@ -911,7 +928,7 @@ int Exec::mode(
 		return 0;
 
 	const std::string answer =
-		" MODE " + params.front() + " " + appliedModes + appliedModesParameters.str();
+		"MODE " + params.front() + " " + appliedModes + appliedModesParameters.str();
 
 	channel->send(client, answer, true, true);
 
@@ -954,8 +971,8 @@ int Exec::who(
 						senderNick,
 						target,
 						user.getUsername(),
-						"host",
-						"ircserv",
+						user.getHost(),
+						"ft_irc",
 						user.getNickname(),
 						flags,
 						"0",

@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 18:15:47 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 23:44:02 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/26 23:48:42 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,11 @@ const std::string& Client::getNickname() const
 const std::string& Client::getRealname() const
 {
 	return m_realname;
+}
+
+const std::string& Client::getHost() const
+{
+	return m_host;
 }
 
 void Client::setUsername(const char* username)

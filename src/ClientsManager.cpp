@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 19:46:29 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/27 00:00:59 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void ClientsManager::remove(int fd, std::vector<Channel>& channels)
 		);
 	}
 
-	Log::info() << "Client on fd " << fd << " (" << clientIt->second.getNickname()
+	Log::info() << "Client on fd " << fd << " (" << clientIt->second.getSource()
 				<< ") disconnected\n";
 
 	for (size_t i = 0; i < channels.size(); ++i)
@@ -97,7 +97,7 @@ void ClientsManager::remove(const char* nickname, std::vector<Channel>& channels
 			m_clients.erase(clientIt);
 
 			Log::info() << "Client on fd " << clientIt->first << " ("
-						<< clientIt->second.getNickname() << ") disconnected\n";
+						<< clientIt->second.getSource() << ") disconnected\n";
 			return;
 		}
 	}

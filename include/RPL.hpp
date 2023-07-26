@@ -6,7 +6,7 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 17:54:41 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/26 13:51:27 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/26 23:52:05 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,15 @@
 #define RPL_HPP
 
 #define RPL_WELCOME(client, source)                                                      \
-	("001 " + (client) + " :Welcome to the ircserv Network, " + (source))
+	("001 " + (client) + " :Welcome to the ft_irc Network, " + (source))
+
+#define RPL_YOURHOST(client)                                                             \
+	("002 " + (client) + " :Your host is ft_irc, running version 1")
+
+#define RPL_CREATED(client, datetime)                                                    \
+	("003 " + (client) + " :This server was created " + (datetime))
+
+#define RPL_MYINFO(client) ("004 " + (client) + " ft_irc 1 n itknol")
 
 #define RPL_UMODEIS(client, modes) ("221 " + (client) + " :" + (modes))
 

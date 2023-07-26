@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:21:58 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 23:24:30 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/26 23:55:40 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 #include "Exec.hpp"
 #include "Log.hpp"
 #include "Message.hpp"
+
+std::string Server::startDate; // NOLINT
 
 Server::Server(const char* port, const char* password) : m_password(password)
 {
@@ -79,9 +81,11 @@ Server::Server(const char* port, const char* password) : m_password(password)
 	Log::info() << "Server started and listening on port " << port << '\n';
 
 	std::time_t now = std::time(0);
+	char buffer[80];
 	std::strftime(
-		m_startDate, sizeof(m_startDate), "%Y-%m-%d %H:%M:%S", std::localtime(&now)
+		buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", std::localtime(&now)
 	);
+	Server::startDate = buffer;
 }
 
 int Server::poll()
