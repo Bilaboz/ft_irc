@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 21:57:46 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/27 00:54:55 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 #include <sys/socket.h>
 
-#include "Server.hpp"
 #include <climits>
 #include <cstring>
 #include <map>
@@ -25,6 +24,7 @@
 #include "Client.hpp"
 #include "Log.hpp"
 #include "RPL.hpp"
+#include "Server.hpp"
 
 const std::map<std::string, Exec::func> Exec::m_functions = Exec::initTable();
 const char* Exec::m_serverPassword = NULL; // NOLINT
@@ -208,6 +208,10 @@ int Exec::user(
 		sendToClient(sender, RPL_YOURHOST(senderNick));
 		sendToClient(sender, RPL_CREATED(senderNick, Server::startDate));
 		sendToClient(sender, RPL_MYINFO(senderNick));
+
+		std::vector<std::string> motd = splitChar(MOTD, '\n');
+		for (size_t i = 0; i < motd.size(); ++i)
+			sendToClient(sender, RPL_MOTD(senderNick, motd[i]));
 	}
 
 	return 0;
@@ -270,6 +274,10 @@ int Exec::nick(
 		sendToClient(client, RPL_YOURHOST(client.second.getNickname()));
 		sendToClient(client, RPL_CREATED(client.second.getNickname(), Server::startDate));
 		sendToClient(client, RPL_MYINFO(client.second.getNickname()));
+
+		std::vector<std::string> motd = splitChar(MOTD, '\n');
+		for (size_t i = 0; i < motd.size(); ++i)
+			sendToClient(client, RPL_MOTD(client.second.getNickname(), motd[i]));
 	}
 
 	return 0;

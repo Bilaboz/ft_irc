@@ -6,12 +6,24 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 17:54:41 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/26 23:52:05 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/27 01:03:49 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RPL_HPP
 #define RPL_HPP
+
+// clang-format off
+#define MOTD \
+	" \n" \
+	"███████╗████████╗     ██╗██████╗  ██████╗\n" \
+	"██╔════╝╚══██╔══╝     ██║██╔══██╗██╔════╝\n" \
+	"█████╗     ██║        ██║██████╔╝██║     \n" \
+	"██╔══╝     ██║        ██║██╔══██╗██║     \n" \
+	"██║        ██║███████╗██║██║  ██║╚██████╗\n" \
+	"╚═╝        ╚═╝╚══════╝╚═╝╚═╝  ╚═╝ ╚═════╝\n" \
+	"\n "
+// clang-format on
 
 #define RPL_WELCOME(client, source)                                                      \
 	("001 " + (client) + " :Welcome to the ft_irc Network, " + (source))
@@ -65,6 +77,8 @@
 
 #define RPL_ENDOFNAMES(client, channel)                                                  \
 	("366 " + (client) + " " + (channel) + " :End of /NAMES list")
+
+#define RPL_MOTD(client, motd) ("372 " + (client) + " :" + (motd))
 
 #define ERR_NOSUCHNICK(client, nick) ("401 " + (client) + " " + (nick) + " :No such nick")
 
