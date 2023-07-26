@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 18:15:47 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 19:34:55 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/26 23:44:02 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ Client::Client() : hasSentPassword(false), isRegistered(false) {}
 
 Client::Client(const Client& other)
 	: hasSentPassword(other.hasSentPassword), isRegistered(other.isRegistered),
-	  m_nickname(other.m_nickname), m_username(other.m_username), m_buffer(other.m_buffer)
+	  m_nickname(other.m_nickname), m_username(other.m_username), m_host(other.m_host),
+	  m_buffer(other.m_buffer)
 {
 }
 
@@ -32,6 +33,7 @@ Client& Client::operator=(const Client& rhs)
 		isRegistered = rhs.isRegistered;
 		m_nickname = rhs.m_nickname;
 		m_username = rhs.m_username;
+		m_host = rhs.m_host;
 		m_buffer = rhs.m_buffer;
 	}
 
@@ -70,6 +72,11 @@ void Client::setRealname(const char* realname)
 	m_realname = realname;
 }
 
+void Client::setHost(const char* host)
+{
+	m_host = host;
+}
+
 std::string Client::receive(
 	int fd, ClientsManager& clients, std::vector<Channel>& channels, bool newPollin
 )
@@ -96,8 +103,8 @@ std::string Client::getSource() const
 	if (!m_username.empty())
 		source << '!' << m_username;
 
-	// if (!m_host.empty())
-	//	source << '@' << m_host;
+	if (!m_host.empty())
+		source << '@' << m_host;
 
 	return source.str();
 }

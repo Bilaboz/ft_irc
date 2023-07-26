@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 17:38:44 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 19:21:03 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/26 20:00:01 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ class Server // NOLINT
 	void stop();
 
   private:
+	char m_startDate[80];
 	const char* m_password;
 	ClientsManager m_clients;
 	std::vector<Channel> m_channels;

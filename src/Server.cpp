@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:21:58 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 19:20:54 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/26 23:24:30 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <netdb.h>
 
 #include <cerrno>
+#include <ctime>
 #include <sstream>
 #include <stdexcept>
 
@@ -23,8 +24,7 @@
 #include "Log.hpp"
 #include "Message.hpp"
 
-Server::Server(const char* port, const char* password)
-	: m_password(password)
+Server::Server(const char* port, const char* password) : m_password(password)
 {
 	int sock_fd = 0;
 	int yes = 1;
@@ -77,6 +77,11 @@ Server::Server(const char* port, const char* password)
 	m_clients.addListener(sock_fd);
 
 	Log::info() << "Server started and listening on port " << port << '\n';
+
+	std::time_t now = std::time(0);
+	std::strftime(
+		m_startDate, sizeof(m_startDate), "%Y-%m-%d %H:%M:%S", std::localtime(&now)
+	);
 }
 
 int Server::poll()
@@ -97,19 +102,29 @@ int Server::poll()
 		{
 			if (pfds[i].fd == pfds[0].fd)
 			{
-				socklen_t addrlen = 0;
-				sockaddr addr;
+				sockaddr_storage addr;
+				socklen_t addrlen = sizeof(addr);
 
-				const int newFd = accept(pfds[i].fd, &addr, &addrlen);
+				const int newFd = accept(pfds[i].fd, (sockaddr*)&addr, &addrlen);
 				if (newFd == -1)
 				{
 					Log::error() << "accept(): " << std::strerror(errno) << '\n';
 					return 2;
 				}
 
-				Log::info() << "New connection on fd " << newFd << "\n";
+				void* inAddr = NULL;
+				if (addr.ss_family == AF_INET)
+					inAddr = &((sockaddr_in*)&addr)->sin_addr;
+				else
+					inAddr = &((sockaddr_in6*)&addr)->sin6_addr;
+
+				char IPStr[INET_ADDRSTRLEN];
+				inet_ntop(addr.ss_family, inAddr, IPStr, sizeof(IPStr));
+
+				Log::info() << "New connection on fd " << newFd << " from " << IPStr << '\n';
 
 				m_clients.add(newFd);
+				m_clients.get(newFd).second.setHost(IPStr);
 			}
 			else
 			{
