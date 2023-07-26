@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 17:26:23 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/26 17:31:43 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -530,36 +530,30 @@ int Exec::invite(
 	}
 
 	// TODO: use isNicknameUsed instead of exceptions
-	try
-	{
-		FdClient& target = clients.get(parameters[0].c_str());
-		if (channel->isUser(target))
-		{
-			sendToClient(
-				sender,
-				ERR_USERONCHANNEL(
-					senderNick, target.second.getNickname(), channel->getName()
-				)
-			);
-			return 1;
-		}
-
-		sendToClient(
-			sender,
-			RPL_INVITING(senderNick, target.second.getNickname(), channel->getName())
-		);
-
-		const std::string response = sender.second.getSource() + " INVITE " +
-									 target.second.getNickname() + " " +
-									 channel->getName();
-		sendToClient(target, response);
-		channel->invite(target);
-	}
-	catch (std::invalid_argument& e)
+	if (!clients.isNicknameUsed(parameters[0].c_str()))
 	{
 		sendToClient(sender, ERR_NOSUCHNICK(senderNick, parameters[0]));
 		return 1;
 	}
+
+	FdClient& target = clients.get(parameters[0].c_str());
+	if (channel->isUser(target))
+	{
+		sendToClient(
+			sender,
+			ERR_USERONCHANNEL(senderNick, target.second.getNickname(), channel->getName())
+		);
+		return 1;
+	}
+
+	sendToClient(
+		sender, RPL_INVITING(senderNick, target.second.getNickname(), channel->getName())
+	);
+
+	const std::string response = sender.second.getSource() + " INVITE " +
+								 target.second.getNickname() + " " + channel->getName();
+	sendToClient(target, response);
+	channel->invite(target);
 
 	return 0;
 }
