@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 15:29:01 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/26 16:17:12 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -723,7 +723,7 @@ int Exec::mode(
 	std::vector<Channel>& channels
 )
 {
-	FdClient& client = clients.get(fd);
+	const FdClient& client = clients.get(fd);
 	const std::vector<std::string>& params = message.parameters();
 
 	if (params.empty())
@@ -828,7 +828,7 @@ int Exec::mode(
 				break;
 
 			{
-				FdClient& target = clients.get(params[paramsIdx].c_str());
+				const FdClient& target = clients.get(params[paramsIdx].c_str());
 				if (!channel->isUser(target))
 					break;
 
