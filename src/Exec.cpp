@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 14:45:04 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/26 15:25:24 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -593,7 +593,11 @@ int Exec::privmsg(
 		if (toSend[i][0] == '#')
 		{
 			const ChannelsIt tmpChan = findChannel(channels, toSend[i]);
-			if (tmpChan->isUser(client))
+			if (tmpChan == channels.end())
+				sendToClient(
+					client, ERR_NOSUCHCHANNEL(client.second.getNickname(), toSend[i])
+				);
+			else if (tmpChan->isUser(client))
 			{
 				tmpChan->send(
 					client,
@@ -822,8 +826,12 @@ int Exec::mode(
 
 			if (!clients.isNicknameUsed(params[paramsIdx].c_str()))
 				break;
-
-			isMinus ? channel->retrograde(client) : channel->promote(client);
+			{
+				FdClient& target = clients.get(params[paramsIdx].c_str());
+				if (!channel->isUser(target))
+					break;
+				isMinus ? channel->retrograde(target) : channel->promote(target);
+			}
 			appliedModes += 'o';
 			appliedModesParameters << ' ' << params[paramsIdx];
 			paramsIdx++;
