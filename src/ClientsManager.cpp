@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/27 16:03:51 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/27 19:21:32 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,6 +204,8 @@ void ClientsManager::removePollFd(int fd)
 
 void ClientsManager::sendToAllClients(const std::string& message) const
 {
-	for (std::map<int, Client>::const_iterator it = m_clients.begin(); it != m_clients.end(); ++it)
+	for (std::map<int, Client>::const_iterator it = m_clients.begin();
+		 it != m_clients.end();
+		 ++it)
 		Exec::sendToClient(*it, message);
 }

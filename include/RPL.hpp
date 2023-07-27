@@ -6,7 +6,7 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 17:54:41 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/27 19:04:12 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/27 19:20:50 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@
 #define ERR_NOSUCHCHANNEL(client, channel)                                               \
 	("403 " + (client) + " " + (channel) + " :No such channel")
 
-#define ERR_CANOOTSENDTOCHAN(client, channel)                                               \
+#define ERR_CANOOTSENDTOCHAN(client, channel)                                            \
 	("404 " + (client) + " " + (channel) + " :Cannot send to channel")
 
 #define ERR_NORECIPIENT(client) ("411 " + (client) + " :No recipient given (PRIVMSG)")

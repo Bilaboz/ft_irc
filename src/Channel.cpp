@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:18 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/27 16:36:52 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/27 19:21:04 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,8 @@ int Channel::kick(FdClient& user, std::vector<Channel>& channels)
 	}
 
 	if (erased)
-		Log::info() << user.second.getNickname() << " left (or kicked) " << m_name << '\n';
+		Log::info() << user.second.getNickname() << " left (or kicked) " << m_name
+					<< '\n';
 
 	return erased ? SUCCESS : USER_NOEXIST;
 }
