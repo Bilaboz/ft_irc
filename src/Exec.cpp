@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/27 00:54:55 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/27 19:05:09 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,12 +219,13 @@ int Exec::user(
 
 bool Exec::isNicknameValid(const std::string& str)
 {
-	if (str[0] == ':' || str[0] == '#' || str[0] == '$')
+	if (str.empty() || str.size() > 9) // TODO: define ?
+		return false;
+	if (str[0] == ':' || str[0] == '#' || str[0] == '$' || str[0] == '+' || str[0] == '-')
 		return false;
 
 	if (str.find_first_of(" ,*?!@.") != std::string::npos)
 		return false;
-
 	return true;
 }
 
@@ -265,7 +266,10 @@ int Exec::nick(
 		return 1;
 	}
 
+	const std::string answer = client.second.getSource() + " NICK " + nickname;
+
 	client.second.setNickname(nickname.c_str());
+	clients.sendToAllClients(answer);
 
 	if (!client.second.getUsername().empty() && !client.second.isRegistered)
 	{
@@ -321,7 +325,7 @@ int Exec::kick(
 		if (tmpChan == channels.end())
 		{
 			sendToClient(
-				client, ERR_NOSUCHCHANNEL(client.second.getNickname(), tmpChan->getName())
+				client, ERR_NOSUCHCHANNEL(client.second.getNickname(), *channelIt)
 			);
 			continue;
 		}
@@ -668,6 +672,11 @@ int Exec::privmsg(
 					false
 				);
 			}
+			else
+				sendToClient(
+					client,
+					ERR_CANOOTSENDTOCHAN(client.second.getNickname(), tmpChan->getName())
+				);
 		}
 		else // send to user directly (not in a channel)
 		{
