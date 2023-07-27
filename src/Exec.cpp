@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/27 16:13:56 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/27 16:48:03 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,12 +219,13 @@ int Exec::user(
 
 bool Exec::isNicknameValid(const std::string& str)
 {
-	if (str[0] == ':' || str[0] == '#' || str[0] == '$')
+	if (str.empty() || str.size() > 9) // TODO: define ?
+		return false;
+	if (str[0] == ':' || str[0] == '#' || str[0] == '$' || str[0] == '+' || str[0] == '-')
 		return false;
 
 	if (str.find_first_of(" ,*?!@.") != std::string::npos)
 		return false;
-
 	return true;
 }
 
@@ -324,7 +325,7 @@ int Exec::kick(
 		if (tmpChan == channels.end())
 		{
 			sendToClient(
-				client, ERR_NOSUCHCHANNEL(client.second.getNickname(), tmpChan->getName())
+				client, ERR_NOSUCHCHANNEL(client.second.getNickname(), *channelIt)
 			);
 			continue;
 		}
