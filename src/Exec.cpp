@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/27 16:48:03 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/27 19:05:09 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -672,6 +672,11 @@ int Exec::privmsg(
 					false
 				);
 			}
+			else
+				sendToClient(
+					client,
+					ERR_CANOOTSENDTOCHAN(client.second.getNickname(), tmpChan->getName())
+				);
 		}
 		else // send to user directly (not in a channel)
 		{
