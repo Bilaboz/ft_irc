@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/27 19:21:32 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/27 19:24:08 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,12 @@ void ClientsManager::remove(int fd, std::vector<Channel>& channels)
 				<< ") disconnected\n";
 
 	for (size_t i = 0; i < channels.size(); ++i)
-		channels[i].kick(*clientIt, channels);
+	{
+		if (channels[i].kick(*clientIt, channels) == Channel::SUCCESS)
+		{
+			channels[i].send(*clientIt, "QUIT :User left the server", true);
+		}
+	}
 
 	close(clientIt->first);
 	this->removePollFd(clientIt->first);
