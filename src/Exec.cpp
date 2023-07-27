@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/27 00:54:55 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/27 16:13:56 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -265,7 +265,10 @@ int Exec::nick(
 		return 1;
 	}
 
+	const std::string answer = client.second.getSource() + " NICK " + nickname;
+
 	client.second.setNickname(nickname.c_str());
+	clients.sendToAllClients(answer);
 
 	if (!client.second.getUsername().empty() && !client.second.isRegistered)
 	{

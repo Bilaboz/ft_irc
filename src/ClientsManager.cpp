@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/27 00:00:59 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/27 16:03:51 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,14 @@
 #include <sys/poll.h>
 #include <unistd.h>
 
+#include <map>
 #include <stdexcept>
 #include <utility>
 #include <vector>
 
 #include "Channel.hpp"
 #include "Client.hpp"
+#include "Exec.hpp"
 #include "Log.hpp"
 
 ClientsManager::ClientsManager() {}
@@ -198,4 +200,10 @@ void ClientsManager::removePollFd(int fd)
 			return;
 		}
 	}
+}
+
+void ClientsManager::sendToAllClients(const std::string& message) const
+{
+	for (std::map<int, Client>::const_iterator it = m_clients.begin(); it != m_clients.end(); ++it)
+		Exec::sendToClient(*it, message);
 }
