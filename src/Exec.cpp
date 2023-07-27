@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/27 19:24:23 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/27 19:25:25 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -915,6 +915,7 @@ int Exec::mode(
 			if (isMinus)
 			{
 				channel->setUserLimit(0);
+				appliedModes += 'l';
 				break;
 			}
 
