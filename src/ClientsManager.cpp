@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/28 14:44:42 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/28 18:37:20 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,3 +218,9 @@ void ClientsManager::sendToAllClients(const std::string& message) const
 		 ++it)
 		Exec::sendToClient(*it, message);
 }
+
+size_t ClientsManager::size() const
+{
+	return m_clients.size();
+}
+

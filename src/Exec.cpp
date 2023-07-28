@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/28 17:55:02 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/28 18:37:28 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ std::map<std::string, Exec::func> Exec::initTable()
 	std::map<std::string, func> ret;
 
 	ret.insert(std::make_pair("WHO", &Exec::who));
+	ret.insert(std::make_pair("DIE", &Exec::die));
 	ret.insert(std::make_pair("PING", &Exec::ping));
 	ret.insert(std::make_pair("QUIT", &Exec::quit));
 	ret.insert(std::make_pair("JOIN", &Exec::join));
@@ -221,8 +222,9 @@ int Exec::user(
 
 bool Exec::isNicknameValid(const std::string& str)
 {
-	if (str.empty() || str.size() > 9) // TODO: define ?
+	if (str.empty() || str.size() > 9)
 		return false;
+
 	if (str[0] == ':' || str[0] == '#' || str[0] == '$' || str[0] == '+' || str[0] == '-')
 		return false;
 
@@ -471,7 +473,6 @@ int Exec::join(
 						tmpChan->getTopicTimestamp()
 					)
 				);
-				// TODO send RPL_TOPICWHOTIME
 			}
 
 			// give op privilege to the first user on the channel
@@ -575,7 +576,7 @@ int Exec::invite(
 		return 1;
 	}
 
-	// Check if the channel exist
+	// Check if the channel exists
 	const ChannelsIt channel = findChannel(channels, parameters[1]);
 	if (channel == channels.end())
 	{
@@ -954,7 +955,6 @@ int Exec::mode(
 			}
 
 			size_t limit = std::strtoul(params[paramsIdx].c_str(), NULL, 10); // NOLINT
-			// TODO: CHECK FOR (LIMIT > 0)
 
 			int intLimit = 0;
 			if (limit > INT_MAX)
@@ -1089,5 +1089,25 @@ int Exec::pass(
 	}
 
 	client.second.hasSentPassword = true;
+	return 0;
+}
+
+int Exec::die(
+	const Message& message, ClientsManager& clients, int fd,
+	std::vector<Channel>& channels
+)
+{
+	(void)message;
+	(void)channels;
+	if (!clients.get(fd).second.isNetworkOperator)
+	{
+		sendToClient(
+			clients.get(fd), "ERROR: This command is limited to network operators"
+		);
+		return 1;
+	}
+
+	clients.sendToAllClients(":ft_irc!ft_irc NOTICE * :Server is shutting down");
+	g_isRunning = false;
 	return 0;
 }
