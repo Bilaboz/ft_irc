@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 14:30:38 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/25 19:37:00 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/28 14:29:16 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ class Exec
 	static ChannelsIt findChannel(
 		std::vector<Channel>& channels, const std::string& name
 	);
+
+	static int bot(const Message& message, const FdClient& client);
 
 	static int
 	join(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);

@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:51:44 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/27 16:02:48 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/28 14:11:30 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ class ClientsManager
 	std::vector<pollfd>& getPollfds();
 	bool isNicknameUsed(const char* nick) const;
 	void sendToAllClients(const std::string& message) const;
+
+	static const std::string botName;
 
   private:
 	std::vector<pollfd> m_fds;

@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:53:35 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/27 19:24:08 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/28 14:44:42 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 
 #include <map>
 #include <stdexcept>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -24,6 +25,8 @@
 #include "Client.hpp"
 #include "Exec.hpp"
 #include "Log.hpp"
+
+const std::string ClientsManager::botName = "George";
 
 ClientsManager::ClientsManager() {}
 
@@ -183,6 +186,7 @@ bool ClientsManager::isNicknameUsed(const char* nick) const
 		 it++)
 		if (it->second.getNickname() == nick)
 			return true;
+
 	return false;
 }
 
