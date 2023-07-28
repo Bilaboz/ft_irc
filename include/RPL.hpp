@@ -6,7 +6,7 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 17:54:41 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/27 19:25:14 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/28 18:47:52 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 	"█████╗     ██║        ██║██████╔╝██║     \n" \
 	"██╔══╝     ██║        ██║██╔══██╗██║     \n" \
 	"██║        ██║███████╗██║██║  ██║╚██████╗\n" \
-	"╚═╝        ╚═╝╚══════╝╚═╝╚═╝  ╚═╝ ╚═════╝\n " \
+	"╚═╝        ╚═╝╚══════╝╚═╝╚═╝  ╚═╝ ╚═════╝\n "
 // clang-format on
 
 #define RPL_WELCOME(client, source)                                                      \
@@ -107,6 +107,8 @@
 
 #define ERR_USERONCHANNEL(client, nick, channel)                                         \
 	("443 " + (client) + " " + (nick) + " " + (channel) + " :is already on channel")
+
+#define ERR_NOTREGISTERED(client, reason) ("451 " + (client) + " :" reason)
 
 #define ERR_NEEDMOREPARAMS(client, command)                                              \
 	("461 " + (client) + " " + command + " :Not enough parameters")

@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/28 18:37:28 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/28 18:46:50 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,10 @@ int Exec::exec(
 	if (!client.second.isRegistered && verb != "CAP" && verb != "NICK" &&
 		verb != "USER" && verb != "PASS")
 	{
-		sendToClient(client, "ERROR :You must register");
+		sendToClient(
+			client, ERR_NOTREGISTERED(client.second.getNickname(), "You must register")
+		);
+		//sendToClient(client, "ERROR :You must register");
 		clients.remove(fd, channels);
 		return -2;
 	}
