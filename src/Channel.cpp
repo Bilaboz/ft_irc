@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 16:42:18 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/27 19:21:04 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/28 17:58:51 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ int Channel::add(FdClient& user, const char* password)
 	{
 		if (!isInvited(user))
 		{
-			if (m_password != password)
+			if (!m_password.empty() && m_password != password)
 				return WRONG_PASSWORD;
 			if (m_userLimit && m_users.size() >= (size_t)m_userLimit)
 				return CHANNELISFULL;

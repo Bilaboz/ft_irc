@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/28 17:35:49 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/28 17:55:02 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -440,7 +440,7 @@ int Exec::join(
 		{
 			Channel newChannel(toJoin[i].c_str());
 
-			newChannel.setPassword(passwords[i].c_str());
+			passwords[i] = "";
 			channels.push_back(newChannel);
 			tmpChan = channels.end() - 1;
 			channelCreated = true;
