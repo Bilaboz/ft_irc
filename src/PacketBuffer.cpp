@@ -6,7 +6,7 @@
 /*   By: rcarles <rcarles@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 18:46:33 by rcarles           #+#    #+#             */
-/*   Updated: 2023/07/22 19:32:07 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/28 18:32:09 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ bool PacketBuffer::isPacketReady() const
 
 int PacketBuffer::receive(int fd)
 {
-	const ssize_t received = recv(fd, m_buffer + m_size, PACKET_SIZE, 0);
+	const ssize_t received = recv(fd, m_buffer + m_size, PACKET_BUFFER_SIZE - m_size, 0);
 	if (received == -1)
 	{
 		Log::error() << "recv(): " << std::strerror(errno) << '\n';
