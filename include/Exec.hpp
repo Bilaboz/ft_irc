@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 14:30:38 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/28 14:29:16 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/28 18:37:09 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,8 @@ class Exec
 	who(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);
 	static int
 	pass(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);
+	static int
+	die(const Message& message, ClientsManager&, int fd, std::vector<Channel>&);
 };
 
 #endif

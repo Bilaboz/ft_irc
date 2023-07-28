@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 21:51:44 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/28 14:11:30 by nthimoni         ###   ########.fr       */
+/*   Updated: 2023/07/28 18:37:00 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class ClientsManager
 
 	~ClientsManager();
 
+	size_t size() const;
 	void addListener(int listener);
 	void add(int fd);
 	void remove(int fd, std::vector<Channel>& channels);

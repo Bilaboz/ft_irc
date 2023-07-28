@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 17:38:44 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 23:54:59 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/28 18:24:18 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@
 
 #define POLL_TIMEOUT 1000
 #define BACKLOG 10
+
+extern bool g_isRunning; // NOLINT
 
 class Server // NOLINT
 {

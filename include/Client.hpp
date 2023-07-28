@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/11 15:22:15 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 23:48:56 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/27 20:10:09 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,9 @@ class Client
 	void reply(const std::string& message, bool includeSource = true) const;
 	std::string getSource() const;
 
-	bool hasSentPassword; // NOLINT
-	bool isRegistered; // NOLINT
+	bool hasSentPassword;	// NOLINT
+	bool isRegistered;		// NOLINT
+	bool isNetworkOperator; // NOLINT
 
   private:
 	std::string m_nickname;

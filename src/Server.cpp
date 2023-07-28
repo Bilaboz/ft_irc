@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 20:21:58 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/26 23:55:40 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/28 18:27:14 by rcarles          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,7 @@ Server::Server(const char* port, const char* password) : m_password(password)
 
 	std::time_t now = std::time(0);
 	char buffer[80];
-	std::strftime(
-		buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", std::localtime(&now)
-	);
+	std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
 	Server::startDate = buffer;
 }
 
@@ -125,10 +123,15 @@ int Server::poll()
 				char IPStr[INET_ADDRSTRLEN];
 				inet_ntop(addr.ss_family, inAddr, IPStr, sizeof(IPStr));
 
-				Log::info() << "New connection on fd " << newFd << " from " << IPStr << '\n';
+				Log::info() << "New connection on fd " << newFd << " from " << IPStr
+							<< '\n';
 
 				m_clients.add(newFd);
 				m_clients.get(newFd).second.setHost(IPStr);
+
+				// If the user is the first to join the server, make it network op
+				if (m_clients.size() == 1)
+					m_clients.get(newFd).second.isNetworkOperator = true;
 			}
 			else
 			{
