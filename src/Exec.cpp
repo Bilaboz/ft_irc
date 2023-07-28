@@ -6,7 +6,7 @@
 /*   By: nthimoni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 15:20:32 by nthimoni          #+#    #+#             */
-/*   Updated: 2023/07/27 19:25:25 by rcarles          ###   ########.fr       */
+/*   Updated: 2023/07/28 17:35:49 by nthimoni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,9 @@
 
 #include "Channel.hpp"
 #include "Client.hpp"
+#include "ClientsManager.hpp"
 #include "Log.hpp"
+#include "Message.hpp"
 #include "RPL.hpp"
 #include "Server.hpp"
 
@@ -257,7 +259,7 @@ int Exec::nick(
 		return 1;
 	}
 
-	if (clients.isNicknameUsed(nickname.c_str()))
+	if (clients.isNicknameUsed(nickname.c_str()) || nickname == ClientsManager::botName)
 	{
 		std::string clientNick = client.second.getNickname();
 		if (clientNick.empty())
@@ -680,6 +682,11 @@ int Exec::privmsg(
 		}
 		else // send to user directly (not in a channel)
 		{
+			if (toSend[i] == ClientsManager::botName)
+			{
+				bot(message, client);
+				continue;
+			}
 			if (!clients.isNicknameUsed(toSend[i].c_str()))
 			{
 				sendToClient(
@@ -696,6 +703,27 @@ int Exec::privmsg(
 		}
 	}
 
+	return 0;
+}
+
+int Exec::bot(const Message& message, const FdClient& client)
+{
+	std::string answer;
+
+	if (message.parameters()[1] == "rock")
+		answer = "paper";
+	else if (message.parameters()[1] == "paper")
+		answer = "scissors";
+	else if (message.parameters()[1] == "scissors")
+		answer = "rock";
+	else
+		answer = "Would you like to play rock paper scissors with me ?";
+
+	sendToClient(
+		client,
+		":" + ClientsManager::botName + "!" + ClientsManager::botName + " " +
+			message.verb() + " " + client.second.getNickname() + " :" + answer
+	);
 	return 0;
 }
 
