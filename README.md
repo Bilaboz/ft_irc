@@ -20,9 +20,9 @@ make
 ## Usage
 
 ```sh
-./ft_irc <port> [password]
+./ircserv <port> [password]
 ```
-Example: `./ft_irc 6667 securepassword`<br>
+Example: `./ircserv 6667 securepassword`<br>
 Note: the password is optional
 
 
