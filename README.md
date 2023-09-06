@@ -22,13 +22,37 @@ make
 ```sh
 ./ft_irc <port> [password]
 ```
-Example: `./ft_irc 6667 securepassword`<br />
+Example: `./ft_irc 6667 securepassword`<br>
 Note: the password is optional
+
+
+## List of currently supported commands
+
+<details>
+<summary>Supported commands</summary>
+<br>
+WHO<br>
+DIE<br>
+PING<br>
+QUIT<br>
+JOIN<br>
+NICK<br>
+PASS<br>
+PART<br>
+KICK<br>
+MODE<br>
+USER<br>
+TOPIC<br>
+WHOIS<br>
+INVITE<br>
+NOTICE<br>
+PRIVMSG<br>
+</details>
 
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/Bilaboz/ft_irc/issues)
+Contributions, issues and feature requests are welcome!<br>Feel free to check [issues page](https://github.com/Bilaboz/ft_irc/issues)
 
 
 ## Show your support
