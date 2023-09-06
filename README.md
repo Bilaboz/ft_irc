@@ -40,7 +40,7 @@ NICK<br>
 PASS<br>
 PART<br>
 KICK<br>
-MODE<br>
+MODE (+-itkol)<br>
 USER<br>
 TOPIC<br>
 WHOIS<br>
